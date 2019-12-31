@@ -1,8 +1,11 @@
 CFLAGS= -W -Wall -pedantic
 CC=gcc
 
-main: main.o
-			$(CC) -o ../build/main ./main.o; rm *.o
+main: main.o client.o
+			$(CC) -o ../build/main ./main.o $(CFLAGS); rm *.o
 
-main.o: main.c
+server.o: client.c
+					$(CC) -o client.o -c client.c $(CFLAGS)
+
+main.o: main.c ../headers/client.h
 				$(CC) -o main.o -c main.c $(CFLAGS)

@@ -36,8 +36,8 @@ typedef struct account {
 } account;
 
 typedef enum boolean {
-    TRUE = 0,
-    FALSE = 1
+    TRUE = 1,
+    FALSE = 0
 } boolean;
 
 

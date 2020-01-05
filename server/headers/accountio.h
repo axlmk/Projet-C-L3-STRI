@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../headers/data_structures.h"
+#include "../headers/account_verifier.h"
 
 /*
     Get an account from a binary file.
@@ -42,5 +43,26 @@ be 3. The cursor value start at 0.
 
 */
 int writeAccount(char *filename, account a, int cur);
+
+/*
+    Seek for an account inside the storage file.
+    Input :
+        filename : char * : The name of the storage file
+        a : account : The account we are looking for
+    Return :
+        -1 : The account has not be found
+        [0, infinite] : The index of the found account
+*/
+int seekAccount(char *filename, account a);
+
+/*
+    Compare two accounts, based on the username / password couple
+    Input:
+        a : account : account to compare to
+        b : account : account to compare to
+    Return:
+        TRUE or FALSE
+*/
+boolean accountCompare(account a, account b);
 
 #endif

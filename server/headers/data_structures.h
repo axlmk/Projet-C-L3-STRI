@@ -35,7 +35,10 @@ typedef struct account {
     directory sharedDirectory[20];
 } account;
 
-
+typedef enum boolean {
+    TRUE = 0,
+    FALSE = 1
+} boolean;
 
 
 

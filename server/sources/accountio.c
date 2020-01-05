@@ -3,13 +3,12 @@
 int readAccount(char *filename, account *a, int cur) {
     FILE *f = fopen(filename, "r");
 
-    if(!f) {
-        fprintf(stderr, RED "An error occured while opening the file <%s>\n" RESET, filename);
+    if(!f)
         return 1;
-    }
 
+    cur *= sizeof(account);
+    fseek(f, cur, SEEK_SET);
     if(!fread(a, sizeof(account), 1, f)) {
-        fprintf(stderr, RED "An error occured while reading the file <%s>\n" RESET, filename);
         fclose(f);
         return 2;
     }
@@ -21,17 +20,31 @@ int readAccount(char *filename, account *a, int cur) {
 int writeAccount(char *filename, account a, int cur) {
     FILE *f = fopen(filename, "a");
 
-    if(!f) {
-        fprintf(stderr, RED "An error occured while opening the file <%s>\n" RESET, filename);
+    if(!f)
         return 1;
-    }
+
+    cur *= sizeof(account);
     fseek(f, cur, SEEK_SET);
     if(!fwrite(&a, sizeof(account), 1, f)) {
-        fprintf(stderr, RED "An error occured while writing the file <%s>\n" RESET, filename);
         fclose(f);
         return 2;
     }
     
     fclose(f);
     return 0;
+}
+
+int seekAccount(char *filename, account a) {
+    int i = 0;
+    account it;
+    while(!readAccount(filename, &it, i)) {
+        if(accountCompare(a, it))
+            return i;
+        i++;
+    }
+    return -1;
+}
+
+boolean accountCompare(account a, account b) {
+    return !(strcmp(a.username, b.username) || strcmp(a.password, b.password));
 }

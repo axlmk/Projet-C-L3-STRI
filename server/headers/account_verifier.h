@@ -2,7 +2,7 @@
 #define __ACCOUNT_VERIFIER__
 
 #include "accountio.h"
-#include "../headers/data_structures.h"
+#include "data_structures.h"
 
 /*
     Check if the login/password couple requested by the client is valid

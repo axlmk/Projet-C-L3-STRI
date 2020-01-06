@@ -1,18 +1,29 @@
 #ifndef __DATA_STRUCTURES__
 #define __DATA_STRUCTURES__
 
+#include "utils.h"
 
-#define RESET   "\033[0m"
-#define BLACK   "\033[30m"
-#define RED     "\033[31m"
-#define GREEN   "\033[32m"
-#define YELLOW  "\033[33m"
-#define BLUE    "\033[34m"
-#define MAGENTA "\033[35m"
-#define CYAN    "\033[36m"
-#define WHITE   "\033[37m"
+typedef enum boolean {
+    TRUE = 1,
+    FALSE = 0
+} boolean;
 
-#include <string.h>
+typedef enum pdu_code {
+    AUTH = 0,
+    A_C = 1,
+    A_M = 2,
+    A_D = 3,
+    D_C = 4,
+    D_S = 5,
+    R_C = 6,
+    R_M = 7,
+    R_D = 8
+} pdu_code;
+
+typedef enum pdu_source {
+    SERVER = 0,
+    CLIENT = 1
+} pdu_source;
 
 typedef struct record {
     char name[15];
@@ -35,11 +46,12 @@ typedef struct account {
     directory sharedDirectory[20];
 } account;
 
-typedef enum boolean {
-    TRUE = 1,
-    FALSE = 0
-} boolean;
-
-
+/* The 'request' field must be terminated by a '\0' character */
+typedef struct pdu {
+    pdu_source source;
+    pdu_code code;
+    int requestSize;
+    char *request;
+} pdu;
 
 #endif

@@ -1,10 +1,8 @@
 #ifndef __ACCOUNTIO__
 #define __ACCOUNTIO__
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "../headers/data_structures.h"
-#include "../headers/account_verifier.h"
+#include "data_structures.h"
+#include "account_verifier.h"
 
 /*
     Get an account from a binary file.

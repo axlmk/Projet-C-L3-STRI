@@ -8,24 +8,55 @@ int main(int argc, char *argv[]) {
 
     char *message = NULL;
 
-    initiateServer();/*
+    initiateServer();
     Initialisation();
-
+    pdu rPdu, sPdu;
 	while(1) {
-		int fini = 0;
 
+		int fini = 0;
 		AttenteClient();
 
 		while(!fini) {
 			message = Reception();
-            switch(message) {
-
+            messageToPDU(&rPdu, message);
+            switch(rPdu.code) {
+                case AUTH:
+                    sPdu.code = 0;
+                break;
+                case A_C:
+                    sPdu.code = 0;
+                break;
+                case A_M:
+                    sPdu.code = 0;
+                break;
+                case A_D:
+                    sPdu.code = 0;
+                break;
+                case D_C:
+                    sPdu.code = 0;
+                break;
+                case D_S:
+                    sPdu.code = 0;
+                break;
+                case R_C:
+                    sPdu.code = 0;
+                break;
+                case R_M:
+                    sPdu.code = 0;
+                break;
+                case R_D:
+                    sPdu.code = 0;
+                break;
+                default:
+                    sPdu.code = 0;
+                    /* le code de la pdu n'a pas ete reconnu */
             }
 			fini  = 1;
-            EmissionBinaire();
+            PDUToMessage(sPdu, &message);
+            Emission(message);
 		}
 
 	}
-	TerminaisonClient()*/
+	TerminaisonClient();
 	return 0;
 }

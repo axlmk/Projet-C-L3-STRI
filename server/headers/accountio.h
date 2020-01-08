@@ -1,6 +1,8 @@
 #ifndef __ACCOUNTIO__
 #define __ACCOUNTIO__
 
+#define PATH_ACCOUNT_STORAGE "../storage/account_test"
+
 #include "data_structures.h"
 #include "account_verifier.h"
 
@@ -17,7 +19,7 @@ be 3. The cursor value start at 0.
     Return:
         Exit code:
             0 : OK 
-            1 : File could not be opened
+            1 : File doesn't exist
             2 : File could not be read
 
 */
@@ -48,7 +50,8 @@ int writeAccount(char *filename, account a, int cur);
         filename : char * : The name of the storage file
         a : account : The account we are looking for
     Return :
-        -1 : The account has not be found
+        -2 : The file doesn't exist
+        -1 : The account has not been found
         [0, infinite] : The index of the found account
 */
 int seekAccount(char *filename, account a);
@@ -61,6 +64,6 @@ int seekAccount(char *filename, account a);
     Return:
         TRUE or FALSE
 */
-boolean accountCompare(account a, account b);
+boolean areLoginsEquals(account a, account b);
 
 #endif

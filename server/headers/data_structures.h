@@ -17,13 +17,10 @@ typedef enum pdu_code {
     D_S = 5,
     R_C = 6,
     R_M = 7,
-    R_D = 8
+    R_D = 8,
+    OK = 9,
+    KO = 10
 } pdu_code;
-
-typedef enum pdu_source {
-    SERVER = 0,
-    CLIENT = 1
-} pdu_source;
 
 typedef struct record {
     char name[15];
@@ -43,14 +40,12 @@ typedef struct account {
     char username[15];
     char password[15];
     directory ownedDirectory;
-    directory sharedDirectory[20];
+    directory *sharedDirectory[20];
 } account;
 
-/* The 'request' field must be terminated by a '\0' character */
+/* The 'request' field must be terminated by a '\n' character then a '\0' character */
 typedef struct pdu {
-    pdu_source source;
     pdu_code code;
-    int requestSize;
     char *request;
 } pdu;
 

@@ -5,8 +5,6 @@
 
 /*
     Convert a pdu structure into a string
-    Warning:
-        Be careful, the integer format used in the sprintf function would have to change if the number of enumerations becomes greater than 9
     Input:
         p : pdu : the pdu to convert
     Output:
@@ -15,7 +13,18 @@
         The number of characters well printed by the sprintf function
 */
 int PDUToMessage(pdu p, char **m);
-int messageToPDU();
+
+/*
+    Convert a char array into a pdu structure
+    Input:
+        m : char* : the string to convert
+    Output:
+        p : pdu* : the created pdu
+    Return
+        0 : OK
+        1 : m is NULL;
+*/
+int messageToPDU(pdu *p, char *m);
 
 
 #endif

@@ -12,6 +12,17 @@
     Return:
         TRUE or FALSE depending on the validity of the login/password couple
 */
+/* a changer selon pdu */
 boolean connectionAuthorized(char *id, char *pass);
+
+/*
+    Test if the login/password couple is identical between two accounts
+    Input:
+        a : account : account to compare
+        b : account : account to compare
+    Return:
+        TRUE or FALSE
+*/
+boolean areCredentialsEquals(account a, account b);
 
 #endif

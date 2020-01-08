@@ -1,14 +1,15 @@
 #include "../headers/data_structures.h"
 #include "../headers/server.h"
 #include "../headers/pdu.h"
+#include "../headers/install.h"
 
 
 int main(int argc, char *argv[]) {
 
     char *message = NULL;
-    /*
-    initiateServer();
-	Initialisation();
+
+    initiateServer();/*
+    Initialisation();
 
 	while(1) {
 		int fini = 0;
@@ -25,16 +26,6 @@ int main(int argc, char *argv[]) {
 		}
 
 	}
-	TerminaisonClient();
-    */
-    pdu p;
-    p.source = SERVER;
-    p.requestSize = 4;
-    p.code = A_C;
-    p.request = malloc(sizeof(char) * 4);
-    strcpy(p.request, "lol");
-    PDUToMessage(p, &message);
-    printf("%s\n", message);
-    free(message);
+	TerminaisonClient()*/
 	return 0;
 }

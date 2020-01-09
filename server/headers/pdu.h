@@ -16,6 +16,7 @@ int PDUToMessage(pdu p, char **m);
 
 /*
     Convert a char array into a pdu structure
+    Warning: m must be terminated by a '\n' character and then a '\0'. This information is only useful if tests are running on this function. 
     Input:
         m : char* : the string to convert
     Output:

@@ -14,21 +14,22 @@ typedef enum pdu_code {
     A_M = 2,
     A_D = 3,
     D_C = 4,
-    D_S = 5,
+    D_D = 5,
     R_C = 6,
     R_M = 7,
     R_D = 8,
     OK = 9,
-    KO = 10
+    KO = 10,
+    DISP = 11
 } pdu_code;
 
 typedef struct record {
     char name[15];
     char firstName[15];
-    char phone[15];
+    char phone[10];
     char address[30];
     char email[30];
-    char birthDate[11];
+    char birthDate[10];
     char comments[50];
 } record;
 
@@ -43,7 +44,7 @@ typedef struct account {
     directory *sharedDirectory[20];
 } account;
 
-/* The 'request' field must be terminated by a '\n' character then a '\0' character */
+/* The 'request' field must be terminated by a '\n' character and then a '\0' character */
 typedef struct pdu {
     pdu_code code;
     char *request;

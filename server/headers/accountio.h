@@ -4,7 +4,7 @@
 #define PATH_ACCOUNT_STORAGE "../storage/account_test"
 
 #include "data_structures.h"
-#include "account_verifier.h"
+#include "authentication.h"
 
 /*
     Get an account from a binary file.

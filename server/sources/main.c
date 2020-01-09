@@ -2,6 +2,7 @@
 #include "../headers/server.h"
 #include "../headers/pdu.h"
 #include "../headers/install.h"
+#include "../headers/authentication.h"
 
 
 int main(int argc, char *argv[]) {
@@ -9,19 +10,22 @@ int main(int argc, char *argv[]) {
     char *message = NULL;
 
     initiateServer();
-    Initialisation();
+    //Initialisation();
     pdu rPdu, sPdu;
-	while(1) {
+    rPdu.request = malloc(sizeof(char) * 13);
+    strcpy(rPdu.request, "admin admin\n");
+    rPdu.code = AUTH;
+	//while(1) {
 
 		int fini = 0;
-		AttenteClient();
+		//AttenteClient();
 
 		while(!fini) {
-			message = Reception();
+			//message = Reception();
             messageToPDU(&rPdu, message);
             switch(rPdu.code) {
-                case AUTH:
-                    sPdu.code = 0;
+                case AUTH: ;
+                    sPdu.code = connectionAuthorized(rPdu.request);
                 break;
                 case A_C:
                     sPdu.code = 0;
@@ -35,7 +39,7 @@ int main(int argc, char *argv[]) {
                 case D_C:
                     sPdu.code = 0;
                 break;
-                case D_S:
+                case D_D:
                     sPdu.code = 0;
                 break;
                 case R_C:
@@ -49,14 +53,13 @@ int main(int argc, char *argv[]) {
                 break;
                 default:
                     sPdu.code = 0;
-                    /* le code de la pdu n'a pas ete reconnu */
             }
 			fini  = 1;
-            PDUToMessage(sPdu, &message);
-            Emission(message);
+            //PDUToMessage(sPdu, &message);
+            //Emission(message);
 		}
 
-	}
-	TerminaisonClient();
+	//}
+	//TerminaisonClient();
 	return 0;
 }

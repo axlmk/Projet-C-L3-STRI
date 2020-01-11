@@ -1,7 +1,7 @@
 #include "../headers/authentication.h"
 
 
-boolean connectionAuthorized(char *request) {
+pdu connectionAuthorized(char *request) {
 
     char **settings = malloc(sizeof(char) * 2);
     getAuthParameters(request, &settings);
@@ -15,9 +15,10 @@ boolean connectionAuthorized(char *request) {
     free(settings);
 
     if((res = seekAccount(PATH_ACCOUNT_STORAGE, acc)) == -1)
-        return FALSE;
-    readAccount(PATH_ACCOUNT_STORAGE, &t, res);
-    return areCredentialsEquals(acc, t);
+        return generateReturnedPdu(KO, "An error occured, the storage file doesn't exist");
+    if(areCredentialsEquals(acc, t))
+       return generateReturnedPdu(OK, "Connection allowed");
+    return generateReturnedPdu(KO, "Connection denied");
 }
 
 boolean areCredentialsEquals(account a, account b) {

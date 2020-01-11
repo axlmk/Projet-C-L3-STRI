@@ -17,3 +17,11 @@ int messageToPDU(pdu *p, char *m) {
     p->request[strlen(p->request) - 2] = '\0';
     return 0;
 }
+
+pdu generateReturnedPdu(pdu_code code, char *request) {
+    pdu res;
+    res.code = code;
+    res.request = malloc(sizeof(char) * (strlen(request) + 1));
+    strcpy(res.request, request);
+    return res;
+}

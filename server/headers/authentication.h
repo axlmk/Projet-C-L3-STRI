@@ -3,6 +3,7 @@
 
 #include "accountio.h"
 #include "data_structures.h"
+#include "pdu.h"
 
 /*
     Check if the login/password couple requested by the client is valid
@@ -12,9 +13,9 @@
         id : char * : login requested by the client
         pass : char * : password requested by the client
     Return:
-        TRUE or FALSE depending on the validity of the login/password couple
+        OK or KO depending on the validity of the login/password couple
 */
-boolean connectionAuthorized(char *request);
+pdu connectionAuthorized(char *request);
 
 /*
     Test if the login/password couple is identical between two accounts

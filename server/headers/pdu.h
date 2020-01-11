@@ -27,5 +27,7 @@ int PDUToMessage(pdu p, char **m);
 */
 int messageToPDU(pdu *p, char *m);
 
+pdu generateReturnedPdu(pdu_code code, char *returnedRequest);
+
 
 #endif

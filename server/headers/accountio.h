@@ -66,4 +66,10 @@ int seekAccount(char *filename, account a);
 */
 boolean areLoginsEquals(account a, account b);
 
+void getA_DParameters(char *request, char ***settings);
+boolean A_DAuthorization(char *login, char *pass);
+pdu deleteAccount(char *request);
+
+int acclen(char *filename);
+
 #endif

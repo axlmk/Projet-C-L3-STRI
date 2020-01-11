@@ -15,12 +15,13 @@ typedef enum pdu_code {
     A_D = 3,
     D_C = 4,
     D_D = 5,
-    R_C = 6,
-    R_M = 7,
-    R_D = 8,
-    OK = 9,
-    KO = 10,
-    DISP = 11
+    D_P = 6,
+    R_C = 7,
+    R_M = 8,
+    R_D = 9,
+    R_P = 10,
+    OK = 11,
+    KO = 12,
 } pdu_code;
 
 typedef struct record {
@@ -36,6 +37,8 @@ typedef struct record {
 typedef struct directory {
     record recordList[20];
 } directory;
+
+//typedef record directory[20]
 
 typedef struct account {
     char username[15];

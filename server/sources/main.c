@@ -3,6 +3,7 @@
 #include "../headers/pdu.h"
 #include "../headers/install.h"
 #include "../headers/authentication.h"
+#include "../headers/accountio.h"
 
 
 int main(int argc, char *argv[]) {
@@ -13,8 +14,19 @@ int main(int argc, char *argv[]) {
     //Initialisation();
     pdu rPdu, sPdu;
     rPdu.request = malloc(sizeof(char) * 13);
-    strcpy(rPdu.request, "admin admin\n");
-    rPdu.code = AUTH;
+
+    /* TEST */
+        strcpy(rPdu.request, "admin admin axel\n");
+        rPdu.code = A_D;
+        account b = {"michel", "bisous65"};
+        writeAccount(PATH_ACCOUNT_STORAGE, b, 1);
+        account c = {"richard", "bisous65"};
+        writeAccount(PATH_ACCOUNT_STORAGE, c, 2);
+        account d = {"axel", "bisous65"};
+        writeAccount(PATH_ACCOUNT_STORAGE, d, 3);
+        account e = {"cyril", "bisous65"};
+        writeAccount(PATH_ACCOUNT_STORAGE, e, 4);
+    /* END TEST */
 	//while(1) {
 
 		int fini = 0;
@@ -25,7 +37,7 @@ int main(int argc, char *argv[]) {
             messageToPDU(&rPdu, message);
             switch(rPdu.code) {
                 case AUTH: ;
-                    sPdu.code = connectionAuthorized(rPdu.request);
+                    sPdu = connectionAuthorized(rPdu.request);
                 break;
                 case A_C:
                     sPdu.code = 0;
@@ -34,12 +46,15 @@ int main(int argc, char *argv[]) {
                     sPdu.code = 0;
                 break;
                 case A_D:
-                    sPdu.code = 0;
+                    sPdu = deleteAccount(rPdu.request);
                 break;
                 case D_C:
                     sPdu.code = 0;
                 break;
                 case D_D:
+                    sPdu.code = 0;
+                break;
+                case D_P:
                     sPdu.code = 0;
                 break;
                 case R_C:
@@ -49,6 +64,9 @@ int main(int argc, char *argv[]) {
                     sPdu.code = 0;
                 break;
                 case R_D:
+                    sPdu.code = 0;
+                break;
+                case R_P:
                     sPdu.code = 0;
                 break;
                 default:

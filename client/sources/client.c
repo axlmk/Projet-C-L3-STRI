@@ -163,3 +163,29 @@ int EmissionBinaire(char *donnees, size_t taille) {
 void Terminaison() {
 	close(socketClient);
 }
+
+void print_usage(char *pr_name){
+	printf("Usage: %s <ip>:<port> <request>\n",pr_name);
+}
+
+int init(char **argv){
+	int port=0;
+	char *iterator=strtok(argv[1],":");
+	struct in_addr *a=malloc(sizeof(struct in_addr));
+	int ret=0;
+	char *iterator2=iterator;
+	if(strcmp(iterator,"localhost")!=0){
+		ret=inet_pton(AF_INET,iterator,a);
+		if(ret!=1){
+			return 1;
+		}
+	}
+	iterator=strtok(NULL,":");
+	port = atoi(iterator);
+	if(port<=80){
+		return 1;
+	}
+	printf("[+] Connecting to %s:%s\n",iterator2,iterator);
+	InitialisationAvecService(iterator2,iterator);
+	return 0;
+}

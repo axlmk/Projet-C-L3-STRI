@@ -44,5 +44,5 @@ int EmissionBinaire(char *donnees, size_t taille);
 void Terminaison();
 
 void print_usage(char *pr_name);
-int args_check(char **argv);
+int init(char **argv);
 #endif

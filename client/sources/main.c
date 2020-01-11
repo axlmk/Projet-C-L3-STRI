@@ -7,10 +7,10 @@ int main(int argc,char **argv)
         print_usage(argv[0]);
         return 1;
     }
-    if(args_check(argv)){
+    if(init(argv)){
         printf("Incorrect arguments\n");
         return 1;
     }
-    InitialisationAvecService("localhost","3355");
+    
     return 0;
 }

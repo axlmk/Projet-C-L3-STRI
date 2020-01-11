@@ -181,10 +181,3 @@ int args_check(char **argv){
 	}
 	return 0;
 }
-
-void conn(char **argv){
-	char *port=strtok(argv[1],":");
-	port=strtok(NULL,":");
-	printf("Connecting to %s\n",port);
-	InitialisationAvecService("localhost",port);
-}

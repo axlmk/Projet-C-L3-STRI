@@ -163,3 +163,28 @@ int EmissionBinaire(char *donnees, size_t taille) {
 void Terminaison() {
 	close(socketClient);
 }
+
+void print_usage(char *pr_name){
+	printf("Usage: %s <ip>:<port> <request>\n",pr_name);
+}
+
+int args_check(char **argv){
+	int port=0;
+	char *iterator=strtok(argv[1],":");
+	if(strcmp(iterator,"localhost")!=0){
+		return 1;
+	}
+	iterator=strtok(NULL,":");
+	port = atoi(iterator);
+	if(port<=80){
+		return 1;
+	}
+	return 0;
+}
+
+void conn(char **argv){
+	char *port=strtok(argv[1],":");
+	port=strtok(NULL,":");
+	printf("Connecting to %s\n",port);
+	InitialisationAvecService("localhost",port);
+}

@@ -19,6 +19,7 @@ int readAccount(char *filename, account *a, int cur) {
 
 int writeAccount(char *filename, account a, int cur) {
     FILE *f = fopen(filename, "ab");
+    fprintf(stderr, "kesskidi %s %d\n", a.username, cur);
 
     if(!f)
         return 1;
@@ -67,13 +68,12 @@ void getA_DParameters(char *request, char ***settings) {
     (*settings)[2] = strtok(NULL, "\n");
 }
 
-boolean A_DAuthorization(char *login, char *pass) {
+boolean A_DAuthorization(char *login) {
     account a, b;
     strcpy(a.username, login);
-    strcpy(a.username, pass);
     if(readAccount(PATH_ACCOUNT_STORAGE, &b, 0))
             return FALSE;
-    return areCredentialsEquals(a, b);
+    return areLoginsEquals(a, b);
 }
 
 
@@ -82,7 +82,7 @@ pdu deleteAccount(char *request) {
     pdu res;
     char **settings = malloc(sizeof(char*) * 3);
     getA_DParameters(request, &settings);
-    if(!A_DAuthorization(settings[0], settings[1])) {
+    if(!A_DAuthorization(settings[0])) {
         res = generateReturnedPdu(KO, "You'r not allowed to perform this operation\n");
         free(settings);
         return res;
@@ -95,7 +95,7 @@ pdu deleteAccount(char *request) {
 
     for(i=0;i<len;i++) {
         if((err = readAccount(PATH_ACCOUNT_STORAGE, &arr[j], i)) == 1) {
-            res = generateReturnedPdu(KO, "Error from the server, file doesn't exist.\n");
+            res = generateReturnedPdu(KO, "Error from the server, file doesn.\n");
             free(arr);
             free(settings);
             return res;

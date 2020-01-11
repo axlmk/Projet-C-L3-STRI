@@ -3,6 +3,9 @@
 
 #include "utils.h"
 
+#define NDIRECTORY 20
+#define LNAME 15
+
 typedef enum boolean {
     TRUE = 1,
     FALSE = 0
@@ -16,12 +19,14 @@ typedef enum pdu_code {
     D_C = 4,
     D_D = 5,
     D_P = 6,
-    R_C = 7,
-    R_M = 8,
-    R_D = 9,
-    R_P = 10,
-    OK = 11,
-    KO = 12,
+    D_A = 7,
+    D_R = 8,
+    R_C = 9,
+    R_M = 10,
+    R_D = 11,
+    R_P = 12,
+    OK = 13,
+    KO = 14,
 } pdu_code;
 
 typedef struct record {
@@ -34,17 +39,13 @@ typedef struct record {
     char comments[50];
 } record;
 
-typedef struct directory {
-    record recordList[20];
-} directory;
-
-//typedef record directory[20]
+typedef record directory[20];
 
 typedef struct account {
-    char username[15];
+    char username[LNAME];
     char password[15];
     directory ownedDirectory;
-    directory *sharedDirectory[20];
+    char sharedDirectory[NDIRECTORY][LNAME];
 } account;
 
 /* The 'request' field must be terminated by a '\n' character and then a '\0' character */

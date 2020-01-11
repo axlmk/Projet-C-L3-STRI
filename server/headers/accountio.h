@@ -66,10 +66,41 @@ int seekAccount(char *filename, account a);
 */
 boolean areLoginsEquals(account a, account b);
 
+/*
+    Parse the request string into the settings array according to the AUTH rules
+    Input:
+        request : char * : The request to parse
+    Output:
+        settints : char *** : The array containing the parsed elements
+*/
 void getA_DParameters(char *request, char ***settings);
-boolean A_DAuthorization(char *login, char *pass);
+
+/* 
+    Check if the user requesting the account deletion is the admin
+    Input:
+        login : char * : The user's login
+    Return
+        TRUE or FALSE
+*/
+boolean A_DAuthorization(char *login);
+
+/*
+    Delete an account from the storage account file
+    Input:
+        request : char * : The request sent by the client
+    Return:
+        The formatted pdu to send
+*/
 pdu deleteAccount(char *request);
 
+/*
+    Count the number of accounts presents in the storage account file
+    Input:
+        filename : char * : The name of the storage account file
+    Return:
+        -1 : An error occured with the readAccount() function
+        [0:infinite] : The number of found accounts
+*/
 int acclen(char *filename);
 
 #endif

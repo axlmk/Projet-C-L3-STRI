@@ -27,6 +27,15 @@ int PDUToMessage(pdu p, char **m);
 */
 int messageToPDU(pdu *p, char *m);
 
+
+/*
+    Generates the PDU that will be send back to the client according to the calling function
+    Input:
+        code : pdu_code : The code to send
+        returnedRequest : char * : The request to send
+    Return:
+        The newly created PDU
+*/
 pdu generateReturnedPdu(pdu_code code, char *returnedRequest);
 
 

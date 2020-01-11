@@ -4,6 +4,7 @@
 #include "../headers/install.h"
 #include "../headers/authentication.h"
 #include "../headers/accountio.h"
+#include "../headers/directory.h"
 
 
 int main(int argc, char *argv[]) {
@@ -16,17 +17,20 @@ int main(int argc, char *argv[]) {
     rPdu.request = malloc(sizeof(char) * 13);
 
     /* TEST */
-        strcpy(rPdu.request, "admin admin axel\n");
-        rPdu.code = A_D;
-        account b = {"michel", "bisous65"};
+        account b = {"michel_test"};
+        strcpy(b.sharedDirectory[0], "");
         writeAccount(PATH_ACCOUNT_STORAGE, b, 1);
-        account c = {"richard", "bisous65"};
+        account c = {"axel_test"};
+        strcpy(c.sharedDirectory[0], "");
         writeAccount(PATH_ACCOUNT_STORAGE, c, 2);
-        account d = {"axel", "bisous65"};
+        account d = {"ben_test"};
+        strcpy(d.sharedDirectory[0], "");
         writeAccount(PATH_ACCOUNT_STORAGE, d, 3);
-        account e = {"cyril", "bisous65"};
-        writeAccount(PATH_ACCOUNT_STORAGE, e, 4);
+
+        rPdu.code = D_A;
+        strcpy(rPdu.request, "axel_test ben_test\n");
     /* END TEST */
+
 	//while(1) {
 
 		int fini = 0;
@@ -57,6 +61,14 @@ int main(int argc, char *argv[]) {
                 case D_P:
                     sPdu.code = 0;
                 break;
+                case D_A:
+                    sPdu = addReader(rPdu.request);
+                    readAccount(PATH_ACCOUNT_STORAGE, &b, 0);
+                    printf("%s\n", sPdu.request);
+                    printf("-%s- %s\n", b.sharedDirectory[0], b.username);
+                break;
+                case D_R:
+                    sPdu = rmReader(rPdu.request);
                 case R_C:
                     sPdu.code = 0;
                 break;

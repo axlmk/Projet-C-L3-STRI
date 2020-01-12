@@ -430,7 +430,7 @@ int dir_recordCreate(char *command){
 	char *address=NULL;
 	char *email=NULL;
 	char *birthdate=NULL;
-	char *comments=NULL;	
+	/*char *comments=NULL;*/	
 	username=strtok(NULL," ");
 	name=username;
 	name=strtok(NULL," ");
@@ -444,9 +444,10 @@ int dir_recordCreate(char *command){
 	email=strtok(NULL," ");
 	birthdate=email;
 	birthdate=strtok(NULL," ");
-	comments=birthdate;
-	comments=strtok(NULL," ");
+	/*comments=birthdate;
+	comments=strtok(NULL," ");*/
 	if(username==NULL || name==NULL || firstname==NULL || phone==NULL || address==NULL || email==NULL || birthdate==NULL){
+		printf("[+] Wrong syntax\n");
 		free(retour);
 		return 1;
 	}

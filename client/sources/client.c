@@ -208,6 +208,12 @@ int parseCommand(char *command){
 	}else if(strcmp(code,"modifyacc")==0){
 		printf("[+] Modifiying an existing account\n");
 		modifyacc(command);
+	}else if(strcmp(code,"delacc")==0){
+		printf("[+] Deleting an existing account\n");
+		delacc(command);
+	}else if(strcmp(code,"dircreate")==0){
+		printf("[+] Creating a directory\n");
+		dircreate(command);
 	} 
 	else {
 		printf("Bad command\n");
@@ -217,7 +223,61 @@ int parseCommand(char *command){
 }
 
 void print_cmdline_help(void){
-	printf("Syntax: \n");
+	printf("Syntax: \nlogin id mdp\nmodifyacc old_id new_id old_mdp new_mdp\n");
+}
+
+int delacc(char *command){
+	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
+	(void *)command;
+	(void *)retour;
+	int len=0;
+	char *send=NULL;
+	char *login=strtok(command," ");
+	char *mdp=NULL;
+	char *to_delete=NULL;
+	login=strtok(NULL," ");
+	mdp=login;
+	mdp=strtok(NULL," ");
+	to_delete=mdp;
+	to_delete=strtok(NULL," ");
+	len=strlen(login)+strlen(mdp)+strlen(to_delete)+10;
+	send=calloc(1,sizeof(char)*len);
+	strcat(send,"A_D ");
+	strcat(send,login);
+	strcat(send," ");
+	strcat(send,mdp);
+	strcat(send," ");
+	strcat(send,to_delete);
+	strcat(send,"\n");
+	printf("%s",send);
+	Emission(send);
+	retour=Reception();
+	/*need to add checks on return value*/
+	free(send);
+	return 0;
+}
+
+int dircreate(char *command){
+	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
+	int len=0;
+	char *send=NULL;
+	char *recordIndex=strtok(command," ");
+	char *username=NULL;	
+	recordIndex=strtok(NULL," ");
+	username=recordIndex;
+	recordIndex=strtok(NULL," ");
+	len=strlen(username)+strlen(recordIndex)+10;
+	send=calloc(1,sizeof(char)*len);
+	strcat(send,"D_C ");
+	strcat(send,username);
+	strcat(send," ");
+	strcat(send,recordIndex);
+	strcat(send,"\n");
+	Emission(send);
+	retour=Reception();
+	/*need to add checks on return value*/
+	free(send);
+	return 0;
 }
 
 int modifyacc(char *command){

@@ -1,4 +1,4 @@
-CFLAGS= -W -Wall -pedantic -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter
+CFLAGS= -W -Wall -pedantic -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-but-set-variable
 CC=gcc
 
 main: main.o client.o

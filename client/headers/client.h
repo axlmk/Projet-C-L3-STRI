@@ -49,5 +49,9 @@ int parseCommand(char *command);
 int login(char *command);
 int reg(char *command);
 int modifyacc(char *command);
+int delacc(char *command);
+int dircreate(char *command);
+int dirdelete(char *command);
+int dirdump(char *command);
 void print_cmdline_help(void);
 #endif

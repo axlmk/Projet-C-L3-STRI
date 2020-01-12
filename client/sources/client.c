@@ -186,6 +186,55 @@ int init(char **argv){
 		return 1;
 	}
 	printf("[+] Connecting to %s:%s\n",iterator2,iterator);
-	InitialisationAvecService(iterator2,iterator);
+	if(InitialisationAvecService(iterator2,iterator)!=1){
+		/* TO CHANGE IMPERATIVELY FOR INTEGRATION*/
+		return 0;
+	}
+	
+	return 0;
+}
+
+int parseCommand(char *command){
+	char extract[500];
+	strncpy(extract,command,500*sizeof(char));
+	char *code=strtok(extract," ");
+	if(strcmp(code,"login")==0){
+		printf("[+] Authentification\n");
+		while(code!=NULL){code=strtok(NULL," ");}
+		login(command);
+	}
+	else if(strcmp(code,"register")==0){
+		printf("[+] Creating and account\n");
+	} else {
+		printf("Bad command\n");
+		print_cmdline_help();
+	}
+	return 0;
+}
+
+void print_cmdline_help(void){
+	printf("Syntax: \n");
+}
+
+int login(char *command){
+	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
+	int len=0;
+	char *send=NULL;
+	char *mdp=strtok(command," ");
+	char *id=NULL;	
+	mdp=strtok(NULL," ");
+	id=mdp;
+	mdp=strtok(NULL," ");
+	len=strlen(id)+strlen(mdp)+10;
+	send=calloc(1,sizeof(char)*len);
+	strcat(send,"AUTH ");
+	strcat(send,id);
+	strcat(send," ");
+	strcat(send,mdp);
+	printf("%s\n",send);
+	strcat(send,"\0");
+	Emission(send);
+	retour=Reception();
+	free(send);
 	return 0;
 }

@@ -15,10 +15,14 @@ int main(int argc,char **argv)
         printf("Incorrect arguments\n");
         return 1;
     }
-    while(strcmp(current,"quit\n")!=0){
+    while(1){
+        printf("#: ");
         fgets(current,sizeof(char)*500,stdin);
-        printf("%s",current);
+        fflush(stdin);
+        if(strcmp(current,"quit\n")==0){break;}
+        parseCommand(current);
     }
     free(current);
+    Terminaison();
     return 0;
 }

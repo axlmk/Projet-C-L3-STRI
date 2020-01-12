@@ -47,5 +47,7 @@ void print_usage(char *pr_name);
 int init(char **argv);
 int parseCommand(char *command);
 int login(char *command);
+int reg(char *command);
+int modifyacc(char *command);
 void print_cmdline_help(void);
 #endif

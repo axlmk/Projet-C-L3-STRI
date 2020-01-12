@@ -200,12 +200,16 @@ int parseCommand(char *command){
 	char *code=strtok(extract," ");
 	if(strcmp(code,"login")==0){
 		printf("[+] Authentification\n");
-		while(code!=NULL){code=strtok(NULL," ");}
 		login(command);
 	}
 	else if(strcmp(code,"register")==0){
 		printf("[+] Creating and account\n");
-	} else {
+		reg(command);
+	}else if(strcmp(code,"modifyacc")==0){
+		printf("[+] Modifiying an existing account\n");
+		modifyacc(command);
+	} 
+	else {
 		printf("Bad command\n");
 		print_cmdline_help();
 	}
@@ -214,6 +218,45 @@ int parseCommand(char *command){
 
 void print_cmdline_help(void){
 	printf("Syntax: \n");
+}
+
+int modifyacc(char *command){
+	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
+	(void *)command;
+	(void *)retour;
+	int len=0;
+	char *send=NULL;
+	char *old_id=strtok(command," ");
+	char *new_id=NULL;
+	char *old_mdp=NULL;
+	char *new_mdp=NULL;	
+	old_id=strtok(NULL," ");
+	new_id=old_id;
+	new_id=strtok(NULL," ");
+	old_mdp=new_id;
+	old_mdp=strtok(NULL," ");
+	new_mdp=old_mdp;
+	new_mdp=strtok(NULL," ");
+	len=strlen(old_id)+strlen(new_id)+strlen(old_mdp)+strlen(new_mdp)+10;
+	send=calloc(1,sizeof(char)*len);
+	strcat(send,"A_M ");
+	strcat(send,old_id);
+	strcat(send," ");
+	strcat(send,new_id);
+	strcat(send,"\n");
+	strcat(send,old_mdp);
+	strcat(send," ");
+	strcat(send,new_mdp);
+	strcat(send,"\n");
+	Emission(send);
+	retour=Reception();
+	/*need to add checks on return value*/
+	free(send);
+	return 0;
+}
+
+int reg(char *command){
+	return 0;
 }
 
 int login(char *command){
@@ -231,10 +274,10 @@ int login(char *command){
 	strcat(send,id);
 	strcat(send," ");
 	strcat(send,mdp);
-	printf("%s\n",send);
-	strcat(send,"\0");
+	strcat(send,"\n");
 	Emission(send);
 	retour=Reception();
+	/*need to add checks on return value*/
 	free(send);
 	return 0;
 }

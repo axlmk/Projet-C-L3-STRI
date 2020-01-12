@@ -6,7 +6,7 @@
 #include "pdu.h"
 
 /*
-    Check if the login/password couple requested by the client is valid
+    Checks if the login/password couple requested by the client is valid
     Requested format for the request field:
         "login password"
     Input:

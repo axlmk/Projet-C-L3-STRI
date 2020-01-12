@@ -18,8 +18,7 @@ int readAccount(char *filename, account *a, int cur) {
 }
 
 int writeAccount(char *filename, account a, int cur) {
-    FILE *f = fopen(filename, "ab");
-    fprintf(stderr, "kesskidi %s %d\n", a.username, cur);
+    FILE *f = fopen(filename, "r+b");
 
     if(!f)
         return 1;
@@ -128,5 +127,82 @@ pdu deleteAccount(char *request) {
     else
         res = generateReturnedPdu(OK, "Account file modified\n"); 
     free(arr);
+    return res;
+}
+
+void getA_CParameters(char *request, char ***data) {
+    int i=0;
+    /*Parsage de la requète contenue dans la PDU en entrée*/
+    (*data)[i] = strtok(request, " ");
+    while(i<3){
+        (*data)[i] = strtok(NULL, " ");
+        i++;
+    }
+}
+
+
+/*Modifie les informations du compte
+la request de la PDU est sous cette forme :
+oldUserName newUserName oldPassword newPassword*/
+pdu CreateAccount(char *request){
+    char **data = malloc(sizeof(char *) * 3);
+    pdu res;
+    getA_DParameters(request, &data);
+
+    if(!A_DAuthorization(data[0])) {
+        res = generateReturnedPdu(KO, "You'r not allowed to perform this operation\n");
+        free(data);
+        return res;
+    }
+
+    account temp;
+    int len, st;
+    /*Ajout des information de l'utilisateur*/
+    strcpy(temp.username, data[1]);
+    strcpy(temp.password, data[2]);
+    if(seekAccount(PATH_ACCOUNT_STORAGE, temp) >= 0) {
+        res = generateReturnedPdu(KO, "Error, account already exists.\n");
+        free(data);
+        return res; 
+    }
+
+    /*Construction du nouveau chemin relatif permettant d'accéder au fichier de
+    stockage des annuaires pointé par le pointeur path*/
+    char *path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(temp.username) + 1));
+    strcpy(path, PATH_STORAGE);
+    strcat(path, data[1]);
+    free(data);
+
+    if(!createFile(path)) {
+        res = generateReturnedPdu(KO, "An error occured while creating the file.\n");
+        free(path);
+        return res; 
+    }
+    if((len = acclen(PATH_ACCOUNT_STORAGE)) == -1) {
+        res = generateReturnedPdu(KO, "An error occured while reading the file.\n");
+        free(path);
+        return res;
+    }
+    if((st = writeAccount(PATH_ACCOUNT_STORAGE, temp, len)) == 1) {
+        res = generateReturnedPdu(KO, "An error occured while opening the file.\n");
+        free(path); 
+        return res;
+    } else if(st == 2) {
+         res = generateReturnedPdu(KO, "An error occured while writing the file.\n");
+        free(path);
+        return res;
+    }
+
+    if((st = writeDirectory(path, temp.ownedDirectory)) == 1) {
+        res = generateReturnedPdu(KO, "An error occured while opening the file.\n");
+        free(path);
+        return res;
+    } else if(st == 2) {
+         res = generateReturnedPdu(KO, "An error occured while writing the file.\n");
+        free(path);
+        return res;
+    }
+    res = generateReturnedPdu(OK, "Success.\n");
+    free(path);
     return res;
 }

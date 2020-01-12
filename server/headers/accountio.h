@@ -2,12 +2,15 @@
 #define __ACCOUNTIO__
 
 #define PATH_ACCOUNT_STORAGE "../storage/account_test"
+#define PATH_STORAGE "../storage/"
 
 #include "data_structures.h"
 #include "authentication.h"
+#include "install.h"
+#include "directory.h"
 
 /*
-    Get an account from a binary file.
+    Gets an account from a binary file.
     Input:
         filename : char * : The name of the file from where the account will be read
         cur : int : A cursor to navigate within the file. The cursor must be used to find
@@ -26,7 +29,7 @@ be 3. The cursor value start at 0.
 int readAccount(char *filename, account *a, int cur);
 
 /*
-    Store an account to a binary file.
+    Stores an account to a binary file.
     Input:
         filename : char * : The name of the file that will be written
         cur : int : A cursor to navigate within the file. The cursor must be used to find
@@ -45,7 +48,7 @@ be 3. The cursor value start at 0.
 int writeAccount(char *filename, account a, int cur);
 
 /*
-    Seek for an account inside the storage file.
+    Seeks for an account inside the storage file.
     Input :
         filename : char * : The name of the storage file
         a : account : The account we are looking for
@@ -57,7 +60,7 @@ int writeAccount(char *filename, account a, int cur);
 int seekAccount(char *filename, account a);
 
 /*
-    Compare two accounts, based on the username / password couple
+    Compares two accounts, based on the username / password couple
     Input:
         a : account : account to compare to
         b : account : account to compare to
@@ -67,7 +70,7 @@ int seekAccount(char *filename, account a);
 boolean areLoginsEquals(account a, account b);
 
 /*
-    Parse the request string into the settings array according to the AUTH rules
+    Parses the request string into the settings array according to the AUTH rules
     Input:
         request : char * : The request to parse
     Output:
@@ -76,7 +79,7 @@ boolean areLoginsEquals(account a, account b);
 void getA_DParameters(char *request, char ***settings);
 
 /* 
-    Check if the user requesting the account deletion is the admin
+    Checks if the user requesting the account deletion is the admin
     Input:
         login : char * : The user's login
     Return
@@ -85,7 +88,7 @@ void getA_DParameters(char *request, char ***settings);
 boolean A_DAuthorization(char *login);
 
 /*
-    Delete an account from the storage account file
+    Deletes an account from the storage account file
     Input:
         request : char * : The request sent by the client
     Return:
@@ -94,7 +97,7 @@ boolean A_DAuthorization(char *login);
 pdu deleteAccount(char *request);
 
 /*
-    Count the number of accounts presents in the storage account file
+    Counts the number of accounts presents in the storage account file
     Input:
         filename : char * : The name of the storage account file
     Return:
@@ -102,5 +105,7 @@ pdu deleteAccount(char *request);
         [0:infinite] : The number of found accounts
 */
 int acclen(char *filename);
+
+pdu CreateAccount(char *request);
 
 #endif

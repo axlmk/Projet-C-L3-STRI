@@ -4,9 +4,10 @@
 #include "utils.h"
 #include "pdu.h"
 #include "accountio.h"
+#include "record.h"
 
 /*
-    Parse the request string into the settings array according to D_A rules
+    Parses the request string into the settings array according to D_A rules
     Input:
         request : char * : The request to parse
     Output:
@@ -15,7 +16,7 @@
 void getD_AParameters(char *request, char ***settings);
 
 /*
-    Seek if a user has already a directory in its shared directories
+    Seeks if a user has already a directory in its shared directories
     Input:
         a : account : The user
         directoryName : char * : The directory
@@ -27,7 +28,7 @@ void getD_AParameters(char *request, char ***settings);
 int userHasDirectory(account a, char *directoryName);
 
 /*
-    Allow a user to have a read only access on the directory of the requesting user
+    Allows a user to have a read only access on the directory of the requesting user
     Input:
         request : char * : The request sent by the client
     Return:
@@ -36,12 +37,23 @@ int userHasDirectory(account a, char *directoryName);
 pdu addReader(char *request);
 
 /*
-    Remove the read only access of a user on the directory of the requesting user
+    Removes the read only access of a user on the directory of the requesting user
     Input:
         request : char * : The request sent by the client
     Return:
         The formatted pdu to send
 */
 pdu rmReader(char *request);
+
+/*
+    Determines if the user can has an additional directory
+    Input:
+        a : account : The user we want to check
+    Return
+        TRUE or FALSE
+*/
+boolean isFull(account a);
+
+int writeDirectory(char *filename, directory t);
 
 #endif

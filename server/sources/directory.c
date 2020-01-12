@@ -7,10 +7,20 @@ void getD_AParameters(char *request, char ***settings) {
 
 int userHasDirectory(account a, char *directoryName) {
     int i;
-    for(i=0;i<NDIRECTORY;i++)
+    for(i=0;i<NDIRECTORY;i++) {   
         if(!strcmp(a.sharedDirectory[i], directoryName))
             return i;
+    }
     return -1;
+}
+
+boolean isFull(account a) {
+    int i;
+    for(i=0;i<NDIRECTORY;i++) {
+        if(!strcmp(a.sharedDirectory[i], ""))
+            return FALSE;
+    }
+    return TRUE;
 }
 
 pdu addReader(char *request) {
@@ -18,7 +28,7 @@ pdu addReader(char *request) {
     account t;
     pdu res;
     int pos, i = 0, err;
-    char **settings = malloc(sizeof(char) * 2);
+    char **settings = malloc(sizeof(char *) * 2);
     getD_AParameters(request, &settings);
 
     strcpy(t.username, settings[1]);
@@ -37,7 +47,11 @@ pdu addReader(char *request) {
         free(settings);
         return res;
     }
-
+    if(isFull(t)) {
+        res = generateReturnedPdu(KO, "Error, user cannot receive another directory\n");
+        free(settings);
+        return res;
+    }
     if(userHasDirectory(t, settings[0]) > -1) {
         res = generateReturnedPdu(KO, "Error, the targeted user already has this directory.\n");
         free(settings);
@@ -48,8 +62,8 @@ pdu addReader(char *request) {
         i++;
     strcpy(t.sharedDirectory[i], settings[0]);
     free(settings);
-    printf("dbg %s %s %s %d\n", t.sharedDirectory[i], t.sharedDirectory[i+1], t.username, pos);
-    if((err = writeAccount(PATH_ACCOUNT_STORAGE, t, 0)) == 1) {
+
+    if((err = writeAccount(PATH_ACCOUNT_STORAGE, t, pos)) == 1) {
         res = generateReturnedPdu(KO, "Error from the server, file error.\n");
         return res;
     } else if(err == 2) {
@@ -65,8 +79,9 @@ pdu rmReader(char *request) {
 account t;
     pdu res;
     int pos, err, dpos;
-    char **settings = malloc(sizeof(char) * 2);
-    getA_DParameters(request, &settings);
+    char **settings = malloc(sizeof(char *) * 2);
+    fprintf(stderr, "[DBG] %s\n", request);
+    getD_AParameters(request, &settings);
 
     strcpy(t.username, settings[1]);
     if((pos = seekAccount(PATH_ACCOUNT_STORAGE, t)) < 0) {
@@ -84,14 +99,13 @@ account t;
         free(settings);
         return res;
     }
-
-    if(!(dpos = userHasDirectory(t, settings[0]))) {
+    if((dpos = userHasDirectory(t, settings[0])) == -1) {
         res = generateReturnedPdu(KO, "Error, the targeted user doesn't have this directory.\n");
         free(settings);
         return res;
     }
     free(settings);
-
+    fprintf(stderr, "coucu %d\n", pos);
     strcpy(t.sharedDirectory[dpos], "");
     if((err = writeAccount(PATH_ACCOUNT_STORAGE, t, pos)) == 1) {
         res = generateReturnedPdu(KO, "Error from the server, file error.\n");
@@ -101,5 +115,14 @@ account t;
         return res;
     }
     res = generateReturnedPdu(OK, "Success : The user will not be able to read your directory.\n");
+    return res;
+}
+
+
+int writeDirectory(char *filename, directory t) {
+    int i, res = 0;
+    for(i=0;i<NRECORDS;i++)
+        if((res = writeRecord(filename, t[i], i)))
+            return res;
     return res;
 }

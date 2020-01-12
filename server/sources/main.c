@@ -17,18 +17,8 @@ int main(int argc, char *argv[]) {
     rPdu.request = malloc(sizeof(char) * 13);
 
     /* TEST */
-        account b = {"michel_test"};
-        strcpy(b.sharedDirectory[0], "");
-        writeAccount(PATH_ACCOUNT_STORAGE, b, 1);
-        account c = {"axel_test"};
-        strcpy(c.sharedDirectory[0], "");
-        writeAccount(PATH_ACCOUNT_STORAGE, c, 2);
-        account d = {"ben_test"};
-        strcpy(d.sharedDirectory[0], "");
-        writeAccount(PATH_ACCOUNT_STORAGE, d, 3);
-
-        rPdu.code = D_A;
-        strcpy(rPdu.request, "axel_test ben_test\n");
+        rPdu.code = A_C;
+        strcpy(rPdu.request, "admin bidule_test fenetre\n");
     /* END TEST */
 
 	//while(1) {
@@ -44,7 +34,7 @@ int main(int argc, char *argv[]) {
                     sPdu = connectionAuthorized(rPdu.request);
                 break;
                 case A_C:
-                    sPdu.code = 0;
+                    sPdu = CreateAccount(rPdu.request);
                 break;
                 case A_M:
                     sPdu.code = 0;
@@ -63,9 +53,6 @@ int main(int argc, char *argv[]) {
                 break;
                 case D_A:
                     sPdu = addReader(rPdu.request);
-                    readAccount(PATH_ACCOUNT_STORAGE, &b, 0);
-                    printf("%s\n", sPdu.request);
-                    printf("-%s- %s\n", b.sharedDirectory[0], b.username);
                 break;
                 case D_R:
                     sPdu = rmReader(rPdu.request);

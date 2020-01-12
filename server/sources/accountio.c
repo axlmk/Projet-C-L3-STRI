@@ -63,8 +63,7 @@ int acclen(char *filename) {
 
 void getA_DParameters(char *request, char ***settings) {
     (*settings)[0] = strtok(request, " ");
-    (*settings)[1] = strtok(NULL, " ");
-    (*settings)[2] = strtok(NULL, "\n");
+    (*settings)[1] = strtok(NULL, "\n");
 }
 
 boolean A_DAuthorization(char *login) {
@@ -79,7 +78,7 @@ boolean A_DAuthorization(char *login) {
 pdu deleteAccount(char *request) {
     //function set up
     pdu res;
-    char **settings = malloc(sizeof(char*) * 3);
+    char **settings = malloc(sizeof(char*) * 2);
     getA_DParameters(request, &settings);
     if(!A_DAuthorization(settings[0])) {
         res = generateReturnedPdu(KO, "You'r not allowed to perform this operation\n");
@@ -104,7 +103,7 @@ pdu deleteAccount(char *request) {
             free(settings);
             return res;
         }
-        if(strcmp(arr[j].username, settings[2]))
+        if(strcmp(arr[j].username, settings[1]))
             j++;
     }
     free(settings);
@@ -212,7 +211,7 @@ void getA_MParameters(char *request, char ***data) {
     /*Parsage de la requète contenue dans la PDU en entrée*/
     (*data)[cpt] = strtok(request, " ");
     cpt++;
-    while(cpt<3){
+    while(cpt<4){
         (*data)[cpt] = strtok(NULL, " ");
         cpt++;
     }
@@ -222,7 +221,7 @@ void getA_MParameters(char *request, char ***data) {
 la request de la PDU est sous cette forme :
 [userName] [userNameModified] [champAModifier] [new]*/
 pdu ModifyAccount(char  *requete){
-    char **tokens = malloc(sizeof(char *) * 3);
+    char **tokens = malloc(sizeof(char *) * 4);
     int err, pos;
     account temp;
     getA_MParameters(requete, &tokens);

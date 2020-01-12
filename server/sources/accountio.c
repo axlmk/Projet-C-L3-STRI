@@ -220,12 +220,17 @@ void getA_MParameters(char *request, char ***data) {
 
 /*Modifie les informations du compte
 la request de la PDU est sous cette forme :
-[userName] [champAModifier] [new]*/
+[userName] [userNameModified] [champAModifier] [new]*/
 pdu ModifyAccount(char  *requete){
     char **tokens = malloc(sizeof(char *) * 3);
     int err, pos;
     account temp;
     getA_MParameters(requete, &tokens);
+
+    if(!A_DAuthorization(tokens[0])) {
+        free(tokens);
+        return generateReturnedPdu(KO, "You'r not allowed to perform this operation\n");
+    }
 
     /*Modification du compte*/
     err = seekAccount(PATH_ACCOUNT_STORAGE, temp);
@@ -236,8 +241,8 @@ pdu ModifyAccount(char  *requete){
         return generateReturnedPdu(KO, "An error occured, the account doesn't exist");
     }
     else {
-        if (!strcmp(tokens[1], "mdp")){
-            strcpy(temp.username, tokens[0]);
+        if (!strcmp(tokens[2], "mdp")){
+            strcpy(temp.username, tokens[1]);
             err = readAccount(PATH_ACCOUNT_STORAGE,&temp,seekAccount(PATH_ACCOUNT_STORAGE,temp));
             if (err==1){
                 return generateReturnedPdu(KO, "An error occured, The file couldn't be opened");
@@ -246,7 +251,7 @@ pdu ModifyAccount(char  *requete){
                 return generateReturnedPdu(KO, "An error occured, the file couldn't be written");
             }
             else {
-                strcpy(temp.password, tokens[2]);
+                strcpy(temp.password, tokens[3]);
                 err = writeAccount(PATH_ACCOUNT_STORAGE,temp,seekAccount(PATH_ACCOUNT_STORAGE,temp));
                 if (err==-2){
                     return generateReturnedPdu(KO, "An error occured, the file doesn't exist");
@@ -260,7 +265,7 @@ pdu ModifyAccount(char  *requete){
             }
         }
         else{
-            strcpy(temp.username, tokens[0]);
+            strcpy(temp.username, tokens[1]);
             pos = seekAccount(PATH_ACCOUNT_STORAGE,temp);
             err = readAccount(PATH_ACCOUNT_STORAGE,&temp,pos);
             if (err==1){
@@ -278,7 +283,7 @@ pdu ModifyAccount(char  *requete){
                     return generateReturnedPdu(KO, "An error occured while removing the file.\n");
                 }
 
-                strcpy(temp.username, tokens[2]);
+                strcpy(temp.username, tokens[3]);
                 path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(temp.username) + 1));
                 strcpy(path, PATH_STORAGE);
                 strcat(path, temp.username);

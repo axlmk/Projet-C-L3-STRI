@@ -206,3 +206,107 @@ pdu CreateAccount(char *request){
     free(path);
     return res;
 }
+
+void getA_MParameters(char *request, char ***data) {
+    int cpt=0;
+    /*Parsage de la requète contenue dans la PDU en entrée*/
+    (*data)[cpt] = strtok(request, " ");
+    cpt++;
+    while(cpt<3){
+        (*data)[cpt] = strtok(NULL, " ");
+        cpt++;
+    }
+}
+
+/*Modifie les informations du compte
+la request de la PDU est sous cette forme :
+[userName] [champAModifier] [new]*/
+pdu ModifyAccount(char  *requete){
+    char **tokens = malloc(sizeof(char *) * 3);
+    int err, pos;
+    account temp;
+    getA_MParameters(requete, &tokens);
+
+    /*Modification du compte*/
+    err = seekAccount(PATH_ACCOUNT_STORAGE, temp);
+    if(err == -2){
+        return generateReturnedPdu(KO, "An error occured, the storage file doesn't exist");
+    }
+    else if (err == -1){
+        return generateReturnedPdu(KO, "An error occured, the account doesn't exist");
+    }
+    else {
+        if (!strcmp(tokens[1], "mdp")){
+            strcpy(temp.username, tokens[0]);
+            err = readAccount(PATH_ACCOUNT_STORAGE,&temp,seekAccount(PATH_ACCOUNT_STORAGE,temp));
+            if (err==1){
+                return generateReturnedPdu(KO, "An error occured, The file couldn't be opened");
+            }
+            else if (err==2){
+                return generateReturnedPdu(KO, "An error occured, the file couldn't be written");
+            }
+            else {
+                strcpy(temp.password, tokens[2]);
+                err = writeAccount(PATH_ACCOUNT_STORAGE,temp,seekAccount(PATH_ACCOUNT_STORAGE,temp));
+                if (err==-2){
+                    return generateReturnedPdu(KO, "An error occured, the file doesn't exist");
+                }
+                else if (err==-1){
+                    return generateReturnedPdu(KO, "An error occured, the account cannot be found");
+                }
+                else{
+                    return generateReturnedPdu(OK, "Success");
+                }
+            }
+        }
+        else{
+            strcpy(temp.username, tokens[0]);
+            pos = seekAccount(PATH_ACCOUNT_STORAGE,temp);
+            err = readAccount(PATH_ACCOUNT_STORAGE,&temp,pos);
+            if (err==1){
+                return generateReturnedPdu(KO, "An error occured, The file couldn't be opened");
+            }
+            else if (err==2){
+                return generateReturnedPdu(KO, "An error occured, the file couldn't be written");
+            }
+            else {
+                char *path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(temp.username) + 1));
+                strcpy(path, PATH_STORAGE);
+                strcat(path, temp.username);
+                if(remove(path)!=0) {
+                    free(path);
+                    return generateReturnedPdu(KO, "An error occured while removing the file.\n");
+                }
+
+                strcpy(temp.username, tokens[2]);
+                path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(temp.username) + 1));
+                strcpy(path, PATH_STORAGE);
+                strcat(path, temp.username);
+
+                if(createFile(path)==0) {
+                    free(path);
+                    return generateReturnedPdu(KO, "An error occured while creating the file.\n");
+                }
+
+                err = writeDirectory(path, temp.ownedDirectory);
+                if(err==1) {
+                    free(path);
+                    return generateReturnedPdu(KO, "An error occured while opening the file.\n");
+                }
+                else if(err == 2) {
+                    free(path);
+                    return generateReturnedPdu(KO, "An error occured while writing the file.\n");
+                }
+                if (writeAccount(PATH_ACCOUNT_STORAGE,temp,pos)==-2){
+                    return generateReturnedPdu(KO, "An error occured, the file doesn't exist");
+                }
+                else if (writeAccount(PATH_ACCOUNT_STORAGE,temp,pos)==-1){
+                    return generateReturnedPdu(KO, "An error occured, the cannot be found");
+                }
+                else{
+                    return generateReturnedPdu(OK, "Success");
+                }
+            }  
+        }
+    }
+}

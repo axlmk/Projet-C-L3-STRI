@@ -107,5 +107,6 @@ pdu deleteAccount(char *request);
 int acclen(char *filename);
 
 pdu CreateAccount(char *request);
+pdu ModifyAccount(char  *requete);
 
 #endif

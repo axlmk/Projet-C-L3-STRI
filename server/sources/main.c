@@ -15,9 +15,8 @@ int main(int argc, char *argv[]) {
     //Initialisation();
     pdu rPdu, sPdu;
     rPdu.request = malloc(sizeof(char) * 100);
-
 	//while(1) {
-
+    
 		int fini = 0;
 		//AttenteClient();
 
@@ -32,7 +31,7 @@ int main(int argc, char *argv[]) {
                     sPdu = CreateAccount(rPdu.request);
                 break;
                 case A_M:
-                    sPdu.code = 0;
+                    sPdu = ModifyAccount(rPdu.request);
                 break;
                 case A_D:
                     sPdu = deleteAccount(rPdu.request);
@@ -73,6 +72,7 @@ int main(int argc, char *argv[]) {
 
 	//}
 	//TerminaisonClient();
+    
     free(rPdu.request);
 	return 0;
 }

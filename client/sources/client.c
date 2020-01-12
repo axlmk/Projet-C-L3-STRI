@@ -214,7 +214,16 @@ int parseCommand(char *command){
 	}else if(strcmp(code,"dircreate")==0){
 		printf("[+] Creating a directory\n");
 		dircreate(command);
-	} 
+	}else if(strcmp(code,"dirdelete")==0){
+		printf("[+] Deleting a directory\n");
+		dirdelete(command);
+	}else if(strcmp(code,"dirdump")==0){
+		printf("[+] Dumping a directory\n");
+		dirdump(command);
+	}else if(strcmp(code,"recordc")==0){
+		printf("[+] Creating a record\n");
+		dir_recordCreate(command);
+	}
 	else {
 		printf("Bad command\n");
 		print_cmdline_help();
@@ -280,6 +289,98 @@ int dircreate(char *command){
 	return 0;
 }
 
+int dirdelete(char *command){
+	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
+	int len=0;
+	char *send=NULL;
+	char *recordIndex=strtok(command," ");
+	char *username=NULL;	
+	recordIndex=strtok(NULL," ");
+	username=recordIndex;
+	recordIndex=strtok(NULL," ");
+	len=strlen(username)+strlen(recordIndex)+10;
+	send=calloc(1,sizeof(char)*len);
+	strcat(send,"D_D ");
+	strcat(send,username);
+	strcat(send," ");
+	strcat(send,recordIndex);
+	strcat(send,"\n");
+	Emission(send);
+	retour=Reception();
+	/*need to add checks on return value*/
+	free(send);
+	return 0;
+}
+
+int dirdump(char *command){
+	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
+	int len=0;
+	char *send=NULL;
+	char *recordIndex=strtok(command," ");
+	char *username=NULL;	
+	recordIndex=strtok(NULL," ");
+	username=recordIndex;
+	recordIndex=strtok(NULL," ");
+	len=strlen(username)+strlen(recordIndex)+10;
+	send=calloc(1,sizeof(char)*len);
+	strcat(send,"D_P ");
+	strcat(send,username);
+	strcat(send," ");
+	strcat(send,recordIndex);
+	strcat(send,"\n");
+	Emission(send);
+	retour=Reception();
+	/*need to add checks on return value*/
+	free(send);
+	return 0;
+}
+
+int diraccess(char *command){
+	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
+	int len=0;
+	char *send=NULL;
+	char *targetedUser=strtok(command," ");
+	char *username=NULL;	
+	targetedUser=strtok(NULL," ");
+	username=targetedUser;
+	targetedUser=strtok(NULL," ");
+	len=strlen(username)+strlen(targetedUser)+10;
+	send=calloc(1,sizeof(char)*len);
+	strcat(send,"D_A ");
+	strcat(send,username);
+	strcat(send," ");
+	strcat(send,targetedUser);
+	strcat(send,"\n");
+	Emission(send);
+	retour=Reception();
+	/*need to add checks on return value*/
+	free(send);
+	return 0;
+}
+
+int dir_rrights(char *command){
+	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
+	int len=0;
+	char *send=NULL;
+	char *targetedUser=strtok(command," ");
+	char *username=NULL;	
+	targetedUser=strtok(NULL," ");
+	username=targetedUser;
+	targetedUser=strtok(NULL," ");
+	len=strlen(username)+strlen(targetedUser)+10;
+	send=calloc(1,sizeof(char)*len);
+	strcat(send,"D_R ");
+	strcat(send,username);
+	strcat(send," ");
+	strcat(send,targetedUser);
+	strcat(send,"\n");
+	Emission(send);
+	retour=Reception();
+	/*need to add checks on return value*/
+	free(send);
+	return 0;
+}
+
 int modifyacc(char *command){
 	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
 	(void *)command;
@@ -307,6 +408,64 @@ int modifyacc(char *command){
 	strcat(send,old_mdp);
 	strcat(send," ");
 	strcat(send,new_mdp);
+	strcat(send,"\n");
+	Emission(send);
+	retour=Reception();
+	/*need to add checks on return value*/
+	free(send);
+	return 0;
+}
+
+int dir_recordCreate(char *command){
+	/*comments not implemented*/
+	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
+	(void *)command;
+	(void *)retour;
+	int len=0;
+	char *send=NULL;
+	char *username=strtok(command," ");
+	char *name=NULL;
+	char *firstname=NULL;
+	char *phone=NULL;
+	char *address=NULL;
+	char *email=NULL;
+	char *birthdate=NULL;
+	char *comments=NULL;	
+	username=strtok(NULL," ");
+	name=username;
+	name=strtok(NULL," ");
+	firstname=name;
+	firstname=strtok(NULL," ");
+	phone=firstname;
+	phone=strtok(NULL," ");
+	address=phone;
+	address=strtok(NULL," ");
+	email=address;
+	email=strtok(NULL," ");
+	birthdate=email;
+	birthdate=strtok(NULL," ");
+	comments=birthdate;
+	comments=strtok(NULL," ");
+	if(username==NULL || name==NULL || firstname==NULL || phone==NULL || address==NULL || email==NULL || birthdate==NULL){
+		free(retour);
+		return 1;
+	}
+	len=strlen(username)+strlen(name)+strlen(firstname)+strlen(phone)+strlen(address)+strlen(email)+strlen(birthdate)+10;
+	send=calloc(1,sizeof(char)*len);
+	strcat(send,"R_C ");
+	strcat(send,username);
+	strcat(send," ");
+	strcat(send,name);
+	strcat(send," ");
+	strcat(send,firstname);
+	strcat(send," ");
+	strcat(send,phone);
+	strcat(send,"\n");
+	strcat(send,address);
+	strcat(send," ");
+	strcat(send,email);
+	strcat(send," ");
+	strcat(send,birthdate);
 	strcat(send,"\n");
 	Emission(send);
 	retour=Reception();

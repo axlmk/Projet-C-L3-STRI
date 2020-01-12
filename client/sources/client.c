@@ -186,6 +186,41 @@ int init(char **argv){
 		return 1;
 	}
 	printf("[+] Connecting to %s:%s\n",iterator2,iterator);
-	InitialisationAvecService(iterator2,iterator);
+	if(InitialisationAvecService(iterator2,iterator)!=1){
+		/* TO CHANGE IMPERATIVELY FOR INTEGRATION*/
+		return 0;
+	}
+	
+	return 0;
+}
+
+int parseCommand(char *command){
+	char extract[500];
+	strncpy(extract,command,500*sizeof(char));
+	char *code=strtok(extract," ");
+	if(strcmp(code,"login")==0){
+		printf("[+] Authentification\n");
+		while(code!=NULL){code=strtok(NULL," ");}
+		login(command);
+	}
+	else if(strcmp(code,"register")==0){
+		printf("[+] Creating and account\n");
+	} else {
+		printf("Bad command\n");
+		print_cmdline_help();
+	}
+	return 0;
+}
+
+void print_cmdline_help(void){
+	printf("Syntax: \n");
+}
+
+int login(char *command){
+	char *mdp=strtok(command," ");
+	char *id=NULL;	
+	mdp=strtok(NULL," ");
+	id=mdp;
+	mdp=strtok(NULL," ");
 	return 0;
 }

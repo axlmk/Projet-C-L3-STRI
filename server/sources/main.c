@@ -14,12 +14,7 @@ int main(int argc, char *argv[]) {
     initiateServer();
     //Initialisation();
     pdu rPdu, sPdu;
-    rPdu.request = malloc(sizeof(char) * 13);
-
-    /* TEST */
-        rPdu.code = A_C;
-        strcpy(rPdu.request, "admin bidule_test fenetre\n");
-    /* END TEST */
+    rPdu.request = malloc(sizeof(char) * 100);
 
 	//while(1) {
 
@@ -78,5 +73,6 @@ int main(int argc, char *argv[]) {
 
 	//}
 	//TerminaisonClient();
+    free(rPdu.request);
 	return 0;
 }

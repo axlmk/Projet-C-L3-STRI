@@ -12,19 +12,20 @@ int main(int argc, char *argv[]) {
     char *message = NULL;
 
     initiateServer();
-    //Initialisation();
+    Initialisation();
     pdu rPdu, sPdu;
     rPdu.request = malloc(sizeof(char) * 100);
-	//while(1) {
+	while(1) {
     
 		int fini = 0;
-		//AttenteClient();
+		AttenteClient();
 
 		while(!fini) {
-			//message = Reception();
+			message = Reception();
             messageToPDU(&rPdu, message);
+            printf("%d %s\n",rPdu.code,rPdu.request);
             switch(rPdu.code) {
-                case AUTH: ;
+                case AUTH:
                     sPdu = connectionAuthorized(rPdu.request);
                 break;
                 case A_C:
@@ -65,13 +66,13 @@ int main(int argc, char *argv[]) {
                 default:
                     sPdu.code = 0;
             }
-			fini  = 1;
-            //PDUToMessage(sPdu, &message);
-            //Emission(message);
+            printf("Here %s\n",sPdu.request);
+            PDUToMessage(sPdu, &message);
+            Emission(message);
 		}
 
-	//}
-	//TerminaisonClient();
+	}
+	TerminaisonClient();
     
     free(rPdu.request);
 	return 0;

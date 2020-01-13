@@ -1,4 +1,5 @@
 #include "../headers/directory.h"
+#include "../headers/record.h"
 
 void getD_AParameters(char *request, char ***settings) {
     (*settings)[0] = strtok(request, " ");

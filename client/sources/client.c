@@ -177,7 +177,7 @@ int init(char **argv){
 	if(strcmp(iterator,"localhost")!=0){
 		ret=inet_pton(AF_INET,iterator,a);
 		if(ret!=1){
-			return 1;
+			exit(1);
 		}
 	}
 	iterator=strtok(NULL,":");
@@ -187,8 +187,7 @@ int init(char **argv){
 	}
 	printf("[+] Connecting to %s:%s\n",iterator2,iterator);
 	if(InitialisationAvecService(iterator2,iterator)!=1){
-		/* TO CHANGE IMPERATIVELY FOR INTEGRATION*/
-		return 0;
+		exit(1);
 	}
 	
 	return 0;
@@ -251,7 +250,7 @@ int delacc(char *command){
 	to_delete=strtok(NULL," ");
 	len=strlen(login)+strlen(mdp)+strlen(to_delete)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"A_D ");
+	strcat(send,"3 ");
 	strcat(send,login);
 	strcat(send," ");
 	strcat(send,mdp);
@@ -277,7 +276,7 @@ int dircreate(char *command){
 	recordIndex=strtok(NULL," ");
 	len=strlen(username)+strlen(recordIndex)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"D_C ");
+	strcat(send,"4 ");
 	strcat(send,username);
 	strcat(send," ");
 	strcat(send,recordIndex);
@@ -300,7 +299,7 @@ int dirdelete(char *command){
 	recordIndex=strtok(NULL," ");
 	len=strlen(username)+strlen(recordIndex)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"D_D ");
+	strcat(send,"5 ");
 	strcat(send,username);
 	strcat(send," ");
 	strcat(send,recordIndex);
@@ -323,7 +322,7 @@ int dirdump(char *command){
 	recordIndex=strtok(NULL," ");
 	len=strlen(username)+strlen(recordIndex)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"D_P ");
+	strcat(send,"6 ");
 	strcat(send,username);
 	strcat(send," ");
 	strcat(send,recordIndex);
@@ -346,7 +345,7 @@ int diraccess(char *command){
 	targetedUser=strtok(NULL," ");
 	len=strlen(username)+strlen(targetedUser)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"D_A ");
+	strcat(send,"7 ");
 	strcat(send,username);
 	strcat(send," ");
 	strcat(send,targetedUser);
@@ -369,7 +368,7 @@ int dir_rrights(char *command){
 	targetedUser=strtok(NULL," ");
 	len=strlen(username)+strlen(targetedUser)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"D_R ");
+	strcat(send,"8 ");
 	strcat(send,username);
 	strcat(send," ");
 	strcat(send,targetedUser);
@@ -387,27 +386,27 @@ int modifyacc(char *command){
 	(void *)retour;
 	int len=0;
 	char *send=NULL;
-	char *old_id=strtok(command," ");
-	char *new_id=NULL;
-	char *old_mdp=NULL;
-	char *new_mdp=NULL;	
-	old_id=strtok(NULL," ");
-	new_id=old_id;
-	new_id=strtok(NULL," ");
-	old_mdp=new_id;
-	old_mdp=strtok(NULL," ");
-	new_mdp=old_mdp;
-	new_mdp=strtok(NULL," ");
-	len=strlen(old_id)+strlen(new_id)+strlen(old_mdp)+strlen(new_mdp)+10;
+	char *adminU=strtok(command," ");
+	char *modU=NULL;
+	char *ftc=NULL;
+	char *nf=NULL;	
+	adminU=strtok(NULL," ");
+	modU=adminU;
+	modU=strtok(NULL," ");
+	ftc=modU;
+	ftc=strtok(NULL," ");
+	nf=ftc;
+	nf=strtok(NULL," ");
+	len=strlen(adminU)+strlen(modU)+strlen(ftc)+strlen(nf)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"A_M ");
-	strcat(send,old_id);
+	strcat(send,"2 ");
+	strcat(send,adminU);
 	strcat(send," ");
-	strcat(send,new_id);
+	strcat(send,modU);
 	strcat(send,"\n");
-	strcat(send,old_mdp);
+	strcat(send,ftc);
 	strcat(send," ");
-	strcat(send,new_mdp);
+	strcat(send,nf);
 	strcat(send,"\n");
 	Emission(send);
 	retour=Reception();
@@ -453,7 +452,7 @@ int dir_recordCreate(char *command){
 	}
 	len=strlen(username)+strlen(name)+strlen(firstname)+strlen(phone)+strlen(address)+strlen(email)+strlen(birthdate)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"R_C ");
+	strcat(send,"9 ");
 	strcat(send,username);
 	strcat(send," ");
 	strcat(send,name);
@@ -476,6 +475,37 @@ int dir_recordCreate(char *command){
 }
 
 int reg(char *command){
+		char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
+	(void *)command;
+	(void *)retour;
+	int len=0;
+	char *send=NULL;
+	char *adminU=strtok(command," ");
+	char *modU=NULL;
+	char *ftc=NULL;	
+	adminU=strtok(NULL," ");
+	modU=adminU;
+	modU=strtok(NULL," ");
+	ftc=modU;
+	ftc=strtok(NULL," ");
+	len=strlen(adminU)+strlen(modU)+strlen(ftc)+10;
+	send=calloc(1,sizeof(char)*len);
+	strcat(send,"1 ");
+	strcat(send,adminU);
+	strcat(send," ");
+	strcat(send,modU);
+	strcat(send,"\n");
+	strcat(send,ftc);
+	strcat(send,"\n");
+	Emission(send);
+	retour=Reception();
+	if(retour==NULL){
+		exit(1);
+	}else if(strncmp(retour,"14",2*sizeof(char))==0){
+		printf("Unauthorized\n");
+	}
+	/*need to add checks on return value*/
+	free(send);
 	return 0;
 }
 
@@ -490,13 +520,18 @@ int login(char *command){
 	mdp=strtok(NULL," ");
 	len=strlen(id)+strlen(mdp)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"AUTH ");
+	strcat(send,"0 ");
 	strcat(send,id);
 	strcat(send," ");
 	strcat(send,mdp);
 	strcat(send,"\n");
 	Emission(send);
 	retour=Reception();
+	if(retour==NULL){
+		exit(1);
+	}else if(strncmp(retour,"14",2*sizeof(char))==0){
+		printf("Connection denied\n");
+	}
 	/*need to add checks on return value*/
 	free(send);
 	return 0;

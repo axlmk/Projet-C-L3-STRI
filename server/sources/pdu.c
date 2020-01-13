@@ -6,15 +6,14 @@ int PDUToMessage(pdu p, char **m) {
 }
 
 int messageToPDU(pdu *p, char *m) {
+    char *ccode=malloc(sizeof(char));
     if(!m)
         return 1;
     p->code = 0;
-    if(m[0] >= 48 || m[0] <= 58)
-        p->code += m[0] * 10;
-    if(m[2] < 48 || m[2] > 58)
-        p->code += m[1];
+    ccode[0]=m[0];
+    p->code=atoi(ccode);
     strcpy(p->request, &m[2]);
-    p->request[strlen(p->request) - 2] = '\0';
+    p->request[strlen(p->request) - 1] = '\0';
     return 0;
 }
 

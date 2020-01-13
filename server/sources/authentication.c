@@ -26,7 +26,7 @@ pdu connectionAuthorized(char *request) {
 }
 
 boolean areCredentialsEquals(account a, account b) {
-    return !strcmp(a.username, b.username) && !strcmp(b.password, b.password);
+    return !strcmp(a.username, b.username) && !strcmp(a.password, b.password);
 }
 
 void getAuthParameters(char *request, char ***settings) {

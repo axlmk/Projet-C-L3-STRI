@@ -106,10 +106,18 @@ pdu deleteAccount(char *request) {
         if(strcmp(arr[j].username, settings[1]))
             j++;
     }
-    free(settings);
-
     //remove and re-write the account file
+
+    char *path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(settings[1]) + 1));
+    strcpy(path, PATH_STORAGE);
+    strcat(path, settings[1]);
+    free(settings);
     if (!remove(PATH_ACCOUNT_STORAGE)) {
+        if(!createFile(PATH_ACCOUNT_STORAGE)) {
+            res = generateReturnedPdu(KO, "Error from the server, problem creating file.\n");
+                free(arr);
+                return res;
+        }
         for(i=0;i<len-1;i++) {
             if((err = writeAccount(PATH_ACCOUNT_STORAGE, arr[i], i)) == 1) {
                 res = generateReturnedPdu(KO, "Error from the server, problem with file.\n");
@@ -122,9 +130,19 @@ pdu deleteAccount(char *request) {
                 return res;
             }
         }
+        if(remove(path)) {
+            res = generateReturnedPdu(KO, "Error from the server, file cannot be delete.\n");
+            free(arr);
+            return res;
+        }
+        free(path);
+
+    } else {
+        res = generateReturnedPdu(KO, "Error from the server, file cannot be delete.\n");
+        free(arr);
+        return res;
     }
-    else
-        res = generateReturnedPdu(OK, "Account file modified\n"); 
+    res = generateReturnedPdu(OK, "Account file modified\n"); 
     free(arr);
     return res;
 }
@@ -133,6 +151,7 @@ void getA_CParameters(char *request, char ***data) {
     int i=0;
     /*Parsage de la requète contenue dans la PDU en entrée*/
     (*data)[i] = strtok(request, " ");
+    i++;
     while(i<3){
         (*data)[i] = strtok(NULL, " ");
         i++;
@@ -146,7 +165,7 @@ oldUserName newUserName oldPassword newPassword*/
 pdu CreateAccount(char *request){
     char **data = malloc(sizeof(char *) * 3);
     pdu res;
-    getA_DParameters(request, &data);
+    getA_CParameters(request, &data);
 
     if(!A_DAuthorization(data[0])) {
         res = generateReturnedPdu(KO, "You'r not allowed to perform this operation\n");

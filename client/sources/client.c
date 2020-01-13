@@ -241,23 +241,16 @@ int delacc(char *command){
 	int len=0;
 	char *send=NULL;
 	char *login=strtok(command," ");
-	char *mdp=NULL;
 	char *to_delete=NULL;
 	login=strtok(NULL," ");
-	mdp=login;
-	mdp=strtok(NULL," ");
-	to_delete=mdp;
-	to_delete=strtok(NULL," ");
-	len=strlen(login)+strlen(mdp)+strlen(to_delete)+10;
+	to_delete=strtok(NULL, " ");
+	len=strlen(login)+strlen(to_delete)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"3 ");
+	strcat(send,"03");
 	strcat(send,login);
-	strcat(send," ");
-	strcat(send,mdp);
 	strcat(send," ");
 	strcat(send,to_delete);
 	strcat(send,"\n");
-	printf("%s",send);
 	Emission(send);
 	retour=Reception();
 	/*need to add checks on return value*/
@@ -381,32 +374,29 @@ int dir_rrights(char *command){
 }
 
 int modifyacc(char *command){
+	
 	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
-	(void *)command;
-	(void *)retour;
 	int len=0;
 	char *send=NULL;
-	char *adminU=strtok(command," ");
-	char *modU=NULL;
-	char *ftc=NULL;
-	char *nf=NULL;	
-	adminU=strtok(NULL," ");
-	modU=adminU;
-	modU=strtok(NULL," ");
-	ftc=modU;
-	ftc=strtok(NULL," ");
-	nf=ftc;
-	nf=strtok(NULL," ");
-	len=strlen(adminU)+strlen(modU)+strlen(ftc)+strlen(nf)+10;
+	char *targetedUser=strtok(command," ");
+	char *username=NULL;	
+	char *admin=NULL;
+	char *mode=NULL;
+	char *field=NULL;
+	admin=strtok(NULL," ");
+	username=strtok(NULL," ");
+	mode=strtok(NULL," ");
+	field=strtok(NULL," ");
+	len=strlen(username)+strlen(targetedUser)+strlen(admin)+strlen(mode)+strlen(field)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"2 ");
-	strcat(send,adminU);
+	strcat(send,"02");
+	strcat(send,admin);
 	strcat(send," ");
-	strcat(send,modU);
-	strcat(send,"\n");
-	strcat(send,ftc);
-	strcat(send," ");
-	strcat(send,nf);
+	strcat(send,username);
+	strcat(send, " ");
+	strcat(send, mode);
+	strcat(send, " ");
+	strcat(send, field);
 	strcat(send,"\n");
 	Emission(send);
 	retour=Reception();

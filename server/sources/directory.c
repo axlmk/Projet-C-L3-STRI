@@ -81,7 +81,6 @@ account t;
     pdu res;
     int pos, err, dpos;
     char **settings = malloc(sizeof(char *) * 2);
-    fprintf(stderr, "[DBG] %s\n", request);
     getD_AParameters(request, &settings);
 
     strcpy(t.username, settings[1]);
@@ -106,7 +105,6 @@ account t;
         return res;
     }
     free(settings);
-    fprintf(stderr, "coucu %d\n", pos);
     strcpy(t.sharedDirectory[dpos], "");
     if((err = writeAccount(PATH_ACCOUNT_STORAGE, t, pos)) == 1) {
         res = generateReturnedPdu(KO, "Error from the server, file error.\n");

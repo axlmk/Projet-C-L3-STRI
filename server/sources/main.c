@@ -22,8 +22,9 @@ int main(int argc, char *argv[]) {
 
 		while(!fini) {
 			message = Reception();
+            fprintf(stderr, "message recu : -%s-\n", message);
             messageToPDU(&rPdu, message);
-            printf("%d %s\n",rPdu.code,rPdu.request);
+            fprintf(stderr, "pdu created : -%d %s-\n", rPdu.code, rPdu.request);
             switch(rPdu.code) {
                 case AUTH:
                     sPdu = connectionAuthorized(rPdu.request);

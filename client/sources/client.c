@@ -202,7 +202,7 @@ int parseCommand(char *command){
 		login(command);
 	}
 	else if(strcmp(code,"register")==0){
-		printf("[+] Creating and account\n");
+		printf("[+] Creating an account\n");
 		reg(command);
 	}else if(strcmp(code,"modifyacc")==0){
 		printf("[+] Modifiying an existing account\n");
@@ -475,7 +475,7 @@ int dir_recordCreate(char *command){
 }
 
 int reg(char *command){
-		char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
+	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
 	(void *)command;
 	(void *)retour;
 	int len=0;
@@ -490,11 +490,11 @@ int reg(char *command){
 	ftc=strtok(NULL," ");
 	len=strlen(adminU)+strlen(modU)+strlen(ftc)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"1 ");
+	strcat(send,"01");
 	strcat(send,adminU);
 	strcat(send," ");
 	strcat(send,modU);
-	strcat(send,"\n");
+	strcat(send," ");
 	strcat(send,ftc);
 	strcat(send,"\n");
 	Emission(send);

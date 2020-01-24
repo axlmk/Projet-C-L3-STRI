@@ -63,9 +63,6 @@ int main(int argc, char *argv[]) {
                 break;
                 case D_A:
                     sPdu = addReader(rPdu.request);
-                    readAccount(PATH_ACCOUNT_STORAGE, &b, 0);
-                    printf("%s\n", sPdu.request);
-                    printf("-%s- %s\n", b.sharedDirectory[0], b.username);
                 break;
                 case D_R:
                     sPdu = rmReader(rPdu.request);

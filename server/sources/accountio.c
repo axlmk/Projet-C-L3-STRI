@@ -12,13 +12,13 @@ int readAccount(char *filename, account *a, int cur) {
         fclose(f);
         return 2;
     }
-    
+
     fclose(f);
     return 0;
 }
 
 int writeAccount(char *filename, account a, int cur) {
-    FILE *f = fopen(filename, "ab");
+    FILE *f = fopen(filename, "wb");
     fprintf(stderr, "kesskidi %s %d\n", a.username, cur);
 
     if(!f)
@@ -30,7 +30,7 @@ int writeAccount(char *filename, account a, int cur) {
         fclose(f);
         return 2;
     }
-    
+
     fclose(f);
     return 0;
 }
@@ -88,7 +88,7 @@ pdu deleteAccount(char *request) {
         return res;
     }
 
-    //get all the account except the deleted one 
+    //get all the account except the deleted one
     int len = acclen(PATH_ACCOUNT_STORAGE);
     account *arr = malloc(sizeof(account) * (len) - 1);
     int i = 0, j = 0, err;
@@ -126,7 +126,7 @@ pdu deleteAccount(char *request) {
         }
     }
     else
-        res = generateReturnedPdu(OK, "Account file modified\n"); 
+        res = generateReturnedPdu(OK, "Account file modified\n");
     free(arr);
     return res;
 }

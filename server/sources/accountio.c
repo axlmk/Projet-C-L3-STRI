@@ -18,8 +18,8 @@ int readAccount(char *filename, account *a, int cur) {
 }
 
 int writeAccount(char *filename, account a, int cur) {
-    FILE *f = fopen(filename, "wb");
-    fprintf(stderr, "kesskidi %s %d\n", a.username, cur);
+
+    FILE *f = fopen(filename, "r+b");
 
     if(!f)
         return 1;
@@ -64,8 +64,7 @@ int acclen(char *filename) {
 
 void getA_DParameters(char *request, char ***settings) {
     (*settings)[0] = strtok(request, " ");
-    (*settings)[1] = strtok(NULL, " ");
-    (*settings)[2] = strtok(NULL, "\n");
+    (*settings)[1] = strtok(NULL, "\n");
 }
 
 boolean A_DAuthorization(char *login) {
@@ -80,7 +79,7 @@ boolean A_DAuthorization(char *login) {
 pdu deleteAccount(char *request) {
     //function set up
     pdu res;
-    char **settings = malloc(sizeof(char*) * 3);
+    char **settings = malloc(sizeof(char*) * 2);
     getA_DParameters(request, &settings);
     if(!A_DAuthorization(settings[0])) {
         res = generateReturnedPdu(KO, "You'r not allowed to perform this operation\n");
@@ -105,13 +104,21 @@ pdu deleteAccount(char *request) {
             free(settings);
             return res;
         }
-        if(strcmp(arr[j].username, settings[2]))
+        if(strcmp(arr[j].username, settings[1]))
             j++;
     }
-    free(settings);
-
     //remove and re-write the account file
+
+    char *path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(settings[1]) + 1));
+    strcpy(path, PATH_STORAGE);
+    strcat(path, settings[1]);
+    free(settings);
     if (!remove(PATH_ACCOUNT_STORAGE)) {
+        if(!createFile(PATH_ACCOUNT_STORAGE)) {
+            res = generateReturnedPdu(KO, "Error from the server, problem creating file.\n");
+                free(arr);
+                return res;
+        }
         for(i=0;i<len-1;i++) {
             if((err = writeAccount(PATH_ACCOUNT_STORAGE, arr[i], i)) == 1) {
                 res = generateReturnedPdu(KO, "Error from the server, problem with file.\n");
@@ -124,9 +131,207 @@ pdu deleteAccount(char *request) {
                 return res;
             }
         }
+        if(remove(path)) {
+            res = generateReturnedPdu(KO, "Error from the server, file cannot be delete.\n");
+            free(arr);
+            return res;
+        }
+        free(path);
+
+    } else {
+        res = generateReturnedPdu(KO, "Error from the server, file cannot be delete.\n");
+        free(arr);
+        return res;
     }
-    else
-        res = generateReturnedPdu(OK, "Account file modified\n");
+
+    res = generateReturnedPdu(OK, "Account file modified\n");
     free(arr);
     return res;
+}
+
+void getA_CParameters(char *request, char ***data) {
+    int i=0;
+    /*Parsage de la requète contenue dans la PDU en entrée*/
+    (*data)[i] = strtok(request, " ");
+    i++;
+    while(i<3){
+        (*data)[i] = strtok(NULL, " ");
+        i++;
+    }
+}
+
+
+/*Modifie les informations du compte
+la request de la PDU est sous cette forme :
+oldUserName newUserName oldPassword newPassword*/
+pdu CreateAccount(char *request){
+    char **data = malloc(sizeof(char *) * 3);
+    pdu res;
+    getA_CParameters(request, &data);
+
+    if(!A_DAuthorization(data[0])) {
+        res = generateReturnedPdu(KO, "You'r not allowed to perform this operation\n");
+        free(data);
+        return res;
+    }
+
+    account temp;
+    int len, st;
+    /*Ajout des information de l'utilisateur*/
+    strcpy(temp.username, data[1]);
+    strcpy(temp.password, data[2]);
+    if(seekAccount(PATH_ACCOUNT_STORAGE, temp) >= 0) {
+        res = generateReturnedPdu(KO, "Error, account already exists.\n");
+        free(data);
+        return res;
+    }
+
+    /*Construction du nouveau chemin relatif permettant d'accéder au fichier de
+    stockage des annuaires pointé par le pointeur path*/
+    char *path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(temp.username) + 1));
+    strcpy(path, PATH_STORAGE);
+    strcat(path, data[1]);
+    free(data);
+
+    if(!createFile(path)) {
+        res = generateReturnedPdu(KO, "An error occured while creating the file.\n");
+        free(path);
+        return res;
+    }
+    if((len = acclen(PATH_ACCOUNT_STORAGE)) == -1) {
+        res = generateReturnedPdu(KO, "An error occured while reading the file.\n");
+        free(path);
+        return res;
+    }
+    if((st = writeAccount(PATH_ACCOUNT_STORAGE, temp, len)) == 1) {
+        res = generateReturnedPdu(KO, "An error occured while opening the file.\n");
+        free(path);
+        return res;
+    } else if(st == 2) {
+         res = generateReturnedPdu(KO, "An error occured while writing the file.\n");
+        free(path);
+        return res;
+    }
+
+    if((st = writeDirectory(path, temp.ownedDirectory)) == 1) {
+        res = generateReturnedPdu(KO, "An error occured while opening the file.\n");
+        free(path);
+        return res;
+    } else if(st == 2) {
+         res = generateReturnedPdu(KO, "An error occured while writing the file.\n");
+        free(path);
+        return res;
+    }
+    res = generateReturnedPdu(OK, "Success.\n");
+    free(path);
+    return res;
+}
+
+void getA_MParameters(char *request, char ***data) {
+    int cpt=0;
+    /*Parsage de la requète contenue dans la PDU en entrée*/
+    (*data)[cpt] = strtok(request, " ");
+    cpt++;
+    while(cpt<4){
+        (*data)[cpt] = strtok(NULL, " ");
+        cpt++;
+    }
+}
+
+/*Modifie les informations du compte
+la request de la PDU est sous cette forme :
+[userName] [userNameModified] [champAModifier] [new]*/
+pdu ModifyAccount(char  *requete){
+    char **tokens = malloc(sizeof(char *) * 4);
+    int err, pos;
+    account temp;
+    getA_MParameters(requete, &tokens);
+
+    if(!A_DAuthorization(tokens[0])) {
+        free(tokens);
+        return generateReturnedPdu(KO, "You'r not allowed to perform this operation\n");
+    }
+
+    /*Modification du compte*/
+    err = seekAccount(PATH_ACCOUNT_STORAGE, temp);
+    if(err == -2){
+        return generateReturnedPdu(KO, "An error occured, the storage file doesn't exist");
+    }
+    else if (err == -1){
+        return generateReturnedPdu(KO, "An error occured, the account doesn't exist");
+    }
+    else {
+        if (!strcmp(tokens[2], "mdp")){
+            strcpy(temp.username, tokens[1]);
+            err = readAccount(PATH_ACCOUNT_STORAGE,&temp,seekAccount(PATH_ACCOUNT_STORAGE,temp));
+            if (err==1){
+                return generateReturnedPdu(KO, "An error occured, The file couldn't be opened");
+            }
+            else if (err==2){
+                return generateReturnedPdu(KO, "An error occured, the file couldn't be written");
+            }
+            else {
+                strcpy(temp.password, tokens[3]);
+                err = writeAccount(PATH_ACCOUNT_STORAGE,temp,seekAccount(PATH_ACCOUNT_STORAGE,temp));
+                if (err==-2){
+                    return generateReturnedPdu(KO, "An error occured, the file doesn't exist");
+                }
+                else if (err==-1){
+                    return generateReturnedPdu(KO, "An error occured, the account cannot be found");
+                }
+                else{
+                    return generateReturnedPdu(OK, "Success");
+                }
+            }
+        }
+        else{
+            strcpy(temp.username, tokens[1]);
+            pos = seekAccount(PATH_ACCOUNT_STORAGE,temp);
+            err = readAccount(PATH_ACCOUNT_STORAGE,&temp,pos);
+            if (err==1){
+                return generateReturnedPdu(KO, "An error occured, The file couldn't be opened");
+            }
+            else if (err==2){
+                return generateReturnedPdu(KO, "An error occured, the file couldn't be written");
+            }
+            else {
+                char *path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(temp.username) + 1));
+                strcpy(path, PATH_STORAGE);
+                strcat(path, temp.username);
+                if(remove(path)!=0) {
+                    free(path);
+                    return generateReturnedPdu(KO, "An error occured while removing the file.\n");
+                }
+
+                strcpy(temp.username, tokens[3]);
+                path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(temp.username) + 1));
+                strcpy(path, PATH_STORAGE);
+                strcat(path, temp.username);
+
+                if(createFile(path)==0) {
+                    free(path);
+                    return generateReturnedPdu(KO, "An error occured while creating the file.\n");
+                }
+
+                err = writeDirectory(path, temp.ownedDirectory);
+                if(err==1) {
+                    free(path);
+                    return generateReturnedPdu(KO, "An error occured while opening the file.\n");
+                }
+                else if(err == 2) {
+                    free(path);
+                    return generateReturnedPdu(KO, "An error occured while writing the file.\n");
+                }
+                if (writeAccount(PATH_ACCOUNT_STORAGE,temp,pos)==-2){
+                    return generateReturnedPdu(KO, "An error occured, the file doesn't exist");
+                }
+                else if (writeAccount(PATH_ACCOUNT_STORAGE,temp,pos)==-1){
+                    return generateReturnedPdu(KO, "An error occured, the cannot be found");
+                }
+                else{
+                    return generateReturnedPdu(OK, "Success");
+                }
+            }
+        }
+    }
 }

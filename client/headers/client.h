@@ -45,4 +45,17 @@ void Terminaison();
 
 void print_usage(char *pr_name);
 int init(char **argv);
+int parseCommand(char *command);
+int login(char *command);
+int reg(char *command);
+int modifyacc(char *command);
+int delacc(char *command);
+int dircreate(char *command);
+int dirdelete(char *command);
+int dirdump(char *command);
+int diraccess(char *command);
+int dir_rrights(char *command);
+int dir_recordCreate(char *command);
+int record_modify(char *command);
+void print_cmdline_help(void);
 #endif

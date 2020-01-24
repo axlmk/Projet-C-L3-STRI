@@ -4,7 +4,7 @@
 #include "data_structures.h"
 
 /*
-    Convert a pdu structure into a string
+    Converts a pdu structure into a string
     Input:
         p : pdu : the pdu to convert
     Output:
@@ -15,7 +15,7 @@
 int PDUToMessage(pdu p, char **m);
 
 /*
-    Convert a char array into a pdu structure
+    Converts a char array into a pdu structure
     Warning: m must be terminated by a '\n' character and then a '\0'. This information is only useful if tests are running on this function. 
     Input:
         m : char* : the string to convert

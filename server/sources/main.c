@@ -12,42 +12,26 @@ int main(int argc, char *argv[]) {
     char *message = NULL;
 
     initiateServer();
-    //Initialisation();
+    Initialisation();
     pdu rPdu, sPdu;
-    rPdu.request = malloc(sizeof(char) * 13);
-
-    /* TEST */
-        account b = {"michel_test"};
-        strcpy(b.sharedDirectory[0], "");
-        writeAccount(PATH_ACCOUNT_STORAGE, b, 1);
-        account c = {"axel_test"};
-        strcpy(c.sharedDirectory[0], "");
-        writeAccount(PATH_ACCOUNT_STORAGE, c, 2);
-        account d = {"ben_test"};
-        strcpy(d.sharedDirectory[0], "");
-        writeAccount(PATH_ACCOUNT_STORAGE, d, 3);
-
-        rPdu.code = D_A;
-        strcpy(rPdu.request, "axel_test ben_test\n");
-    /* END TEST */
-
-	//while(1) {
-
+    rPdu.request = malloc(sizeof(char) * 100);
+	while(1) {
+    
 		int fini = 0;
-		//AttenteClient();
+		AttenteClient();
 
 		while(!fini) {
-			//message = Reception();
+			message = Reception();
             messageToPDU(&rPdu, message);
             switch(rPdu.code) {
-                case AUTH: ;
+                case AUTH:
                     sPdu = connectionAuthorized(rPdu.request);
                 break;
                 case A_C:
-                    sPdu.code = 0;
+                    sPdu = CreateAccount(rPdu.request);
                 break;
                 case A_M:
-                    sPdu.code = 0;
+                    sPdu = ModifyAccount(rPdu.request);
                 break;
                 case A_D:
                     sPdu = deleteAccount(rPdu.request);
@@ -81,12 +65,13 @@ int main(int argc, char *argv[]) {
                 default:
                     sPdu.code = 0;
             }
-			fini  = 1;
-            //PDUToMessage(sPdu, &message);
-            //Emission(message);
+            PDUToMessage(sPdu, &message);
+            Emission(message);
 		}
 
-	//}
-	//TerminaisonClient();
+	}
+	TerminaisonClient();
+    
+    free(rPdu.request);
 	return 0;
 }

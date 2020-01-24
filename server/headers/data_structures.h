@@ -5,6 +5,8 @@
 
 #define NDIRECTORY 20
 #define LNAME 15
+#define NRECORDS 20
+#define LPASS 15
 
 typedef enum boolean {
     TRUE = 1,
@@ -39,11 +41,11 @@ typedef struct record {
     char comments[50];
 } record;
 
-typedef record directory[20];
+typedef record directory[NRECORDS];
 
 typedef struct account {
     char username[LNAME];
-    char password[15];
+    char password[LPASS];
     directory ownedDirectory;
     char sharedDirectory[NDIRECTORY][LNAME];
 } account;

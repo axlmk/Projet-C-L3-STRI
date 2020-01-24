@@ -1,5 +1,6 @@
 *.vscode
 a.out
 *_test
-*_test.*
+*_test.* 
+*settings.json   
 

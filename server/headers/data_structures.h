@@ -7,6 +7,8 @@
 #define LNAME 15
 #define NRECORDS 20
 #define LPASS 15
+#define LADDRESS 50
+#define LCOMMENTS 200
 
 typedef enum boolean {
     TRUE = 1,
@@ -32,13 +34,13 @@ typedef enum pdu_code {
 } pdu_code;
 
 typedef struct record {
-    char name[15];
-    char firstName[15];
-    char phone[10];
-    char address[30];
-    char email[30];
-    char birthDate[10];
-    char comments[50];
+    char name[LNAME];
+    char firstName[LNAME];
+    char phone[11];
+    char address[LADDRESS];
+    char email[LADDRESS];
+    char birthDate[11];
+    char comments[LCOMMENTS];
 } record;
 
 typedef record directory[NRECORDS];

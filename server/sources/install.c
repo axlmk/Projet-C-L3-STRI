@@ -1,7 +1,8 @@
 #include "../headers/install.h"
 
 int initiateServer(void) {
-    account t = {"admin"};
+    account t;
+    strcpy(t.username, "admin");
     int res = seekAccount(PATH_ACCOUNT_STORAGE, t);
     if(res == -2) {
         printf("[*] Storage file not detected.\n[*] Installation of the server.\n");

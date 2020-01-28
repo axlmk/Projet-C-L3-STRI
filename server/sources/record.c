@@ -43,7 +43,7 @@ int writeRecord(char *filename, record r, int cur) {
         fclose(f);
         return 2;
     }
-    
+
     fclose(f);
     return 0;
 }
@@ -60,7 +60,7 @@ int readRecord(char *filename, record *a, int cur) {
         fclose(f);
         return 2;
     }
-    
+
     fclose(f);
     return 0;
 }

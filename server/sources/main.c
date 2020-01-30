@@ -15,16 +15,17 @@ int main(int argc, char *argv[]) {
     initiateServer();
     //Initialisation();
     pdu rPdu, sPdu;
+    rPdu.code = R_M;
     rPdu.request = malloc(sizeof(char) * 200);
-    strcpy(rPdu.request, "admin 1 name:Gauthier phone:0627033494 birthDate:02/10/1099 firstName:axel address:40_avenue_louis_ariste_passerieu comment:the_nicest_guy");
+    strcpy(rPdu.request, "admin 1 name:Gauthier phone:0627033494 birthDate:02/10/1099 firstName:axel address:40_avenue_louis_ariste_passerieu comment:the_nicest_guy email:axel.gauthier@univ-tlse3.fr");
 	//while(1) {
     
-		//int fini = 0;
+	//	int fini = 0;
 	//	AttenteClient();
 
-		//while(!fini) {
-	//		message = Reception();
-            //messageToPDU(&rPdu, message);
+	//	while(!fini) {
+			//message = Reception();
+            messageToPDU(&rPdu, message);
             rPdu.code = R_M;
             switch(rPdu.code) {
                 case AUTH:
@@ -63,9 +64,9 @@ int main(int argc, char *argv[]) {
                 default:
                     sPdu.code = 0;
             }
-            //PDUToMessage(sPdu, &message);
-            //Emission(message);
-		//}
+            PDUToMessage(sPdu, &message);
+      //      Emission(message);
+	//	}
 
 	//}
 	//TerminaisonClient();

@@ -13,20 +13,17 @@ int main(int argc, char *argv[]) {
     char *message = NULL;
 
     initiateServer();
-    //Initialisation();
+    Initialisation();
     pdu rPdu, sPdu;
-    rPdu.code = R_M;
     rPdu.request = malloc(sizeof(char) * 200);
-    strcpy(rPdu.request, "admin 1 name:Gauthier phone:0627033494 birthDate:02/10/1099 firstName:axel address:40_avenue_louis_ariste_passerieu comment:the_nicest_guy email:axel.gauthier@univ-tlse3.fr");
-	//while(1) {
+	while(1) {
     
-	//	int fini = 0;
-	//	AttenteClient();
+    	int fini = 0;
+	    AttenteClient();
 
-	//	while(!fini) {
-			//message = Reception();
+		while(!fini) {
+			message = Reception();
             messageToPDU(&rPdu, message);
-            rPdu.code = R_M;
             switch(rPdu.code) {
                 case AUTH:
                     sPdu = connectionAuthorized(rPdu.request);
@@ -50,7 +47,7 @@ int main(int argc, char *argv[]) {
                     sPdu = rmReader(rPdu.request);
                 break;
                 case R_C:
-                    sPdu.code = 0;
+                    sPdu = createRecord(rPdu.request);
                 break;
                 case R_M:
                     sPdu = modifyRecord(rPdu.request);
@@ -65,11 +62,11 @@ int main(int argc, char *argv[]) {
                     sPdu.code = 0;
             }
             PDUToMessage(sPdu, &message);
-      //      Emission(message);
-	//	}
+            Emission(message);
+		}
 
-	//}
-	//TerminaisonClient();
+	}
+	TerminaisonClient();
     
     free(rPdu.request);
 	return 0;

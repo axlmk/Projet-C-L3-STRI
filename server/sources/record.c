@@ -85,6 +85,117 @@ boolean matchField(char *field, char *str_regex) {
    return FALSE;
 }
 
+void clearRecord(record *r) {
+    memset(r->address, 0, LADDRESS);
+    memset(r->phone, 0, 11);
+    memset(r->birthDate, 0, 11);
+    memset(r->firstName, 0, LNAME);
+    memset(r->name, 0, LNAME);
+    memset(r->email, 0, LADDRESS);
+    memset(r->comments, 0, LCOMMENTS);
+}
+
+pdu createRecord(char *request) {
+    int n;
+    if(!(n = getSettingsNumber(request)))
+        return generateReturnedPdu(KO, "Error from the request.\n");
+    char **settings = malloc(sizeof(char*) * n);
+    getR_MParameters(request, &settings, n);
+    record r;
+    clearRecord(&r);
+    char *field;
+    int i = 2;
+    int cmpt = 0;
+
+    while(i < n) {
+        field = strtok(settings[i++], ":");
+        if(!strcmp(field, "name")) {
+            field = strtok(NULL, " ");
+            if(strlen(field) > LNAME) {
+                free(settings);
+                return generateReturnedPdu(KO, "Error name size too long.\n");
+            }
+            cmpt++;
+            strcpy(r.name, field);
+        } else if(!strcmp(field, "firstName")) {
+            field = strtok(NULL, " ");
+            if(strlen(field) > LNAME) {
+                free(settings);
+                return generateReturnedPdu(KO, "Error first name size too long.\n");
+            }
+            cmpt++;
+            strcpy(r.firstName, field);
+        } else if(!strcmp(field, "phone")) {
+            field = strtok(NULL, " ");
+            if(!matchField(field, "^[0-9]{10}$")) {
+                free(settings);
+                return generateReturnedPdu(KO, "Error phone syntax doesn't match.\n");
+            }
+            strcpy(r.phone, field);
+        } else if(!strcmp(field, "address")) {
+            field = strtok(NULL, " ");
+            if(strlen(field) > LADDRESS) {
+                free(settings);
+                return generateReturnedPdu(KO, "Error address size too long.\n");
+            }
+            cmpt++;
+            strcpy(r.address, field);
+        } else if(!strcmp(field, "email")) {
+            field = strtok(NULL, " ");
+            if(!matchField(field, "^[-_.[:alnum:]]+@[-_[:alnum:]]+\\.[[:alnum:]]{2,4}$")) {
+                free(settings);
+                return generateReturnedPdu(KO, "Error email syntax doesn't match.\n");
+            }
+            if(strlen(field) > LADDRESS) {
+                free(settings);
+                return generateReturnedPdu(KO, "Error address size too long.\n");
+            }
+            strcpy(r.email, field);
+        } else if(!strcmp(field, "birthDate")) {
+            field = strtok(NULL, " ");
+            if(!matchField(field, "^[0-9]{2}/[0-9]{2}/[0-9]{4}$")) {
+                free(settings);
+                return generateReturnedPdu(KO, "Error birthdate syntax doesn't match.\n");
+            }
+            strcpy(r.birthDate, field);
+        } else if(!strcmp(field, "comment")) {
+            field = strtok(NULL, " ");
+            if(strlen(field) > LCOMMENTS) {
+                free(settings);
+                return generateReturnedPdu(KO, "Error address size too long.\n");
+            }
+            strcpy(r.comments, field);
+        } else {
+            free(settings);
+            return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        }
+    }
+    
+    if(cmpt < 3) {
+        free(settings);
+        return generateReturnedPdu(KO, "Error, the name, first name and email fields are mandatory to create a record.\n");
+    }
+
+    int len = strlen(PATH_STORAGE) + strlen(settings[0]) + 1;
+    int numRecord;
+    char *path = malloc(sizeof(char) * len);
+    memset(path, 0, len);
+    sprintf(path, "%s%s", PATH_STORAGE, settings[0]);
+    free(settings);
+
+    numRecord = strtol(settings[1], NULL, 10);
+    int res = writeRecord(path, r, numRecord);
+    free(path);
+
+    if(res == 1)
+        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+    else if(res == 2)
+        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+    else
+        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+}
+
+
 //request : user recordIndication field:value [field:value]...
 pdu modifyRecord(char *request) {
     int n;
@@ -136,7 +247,6 @@ pdu modifyRecord(char *request) {
                 free(settings);
                 return generateReturnedPdu(KO, "Error address size too long.\n");
             }
-            fprintf(stderr, "[DBG] : test %s\n", field);
             strcpy(r.email, field);
         } else if(!strcmp(field, "birthDate")) {
             field = strtok(NULL, " ");
@@ -186,14 +296,7 @@ pdu deleteRecord(char *request) {
     char **settings = malloc(sizeof(char*) * 2);
     getR_MParameters(request, &settings, 2);
     record r;
-
-    memset(&(r.address), 0, LADDRESS);
-    memset(&(r.phone), 0, 11);
-    memset(&(r.birthDate), 0, 11);
-    memset(&(r.firstName), 0, LNAME);
-    memset(&(r.name), 0, LNAME);
-    memset(&(r.email), 0, LADDRESS);
-    memset(&(r.comments), 0, LCOMMENTS);
+    clearRecord(&r);
     
     int len = strlen(PATH_STORAGE) + strlen(settings[0]) + 1;
     int numRecord;

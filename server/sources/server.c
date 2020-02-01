@@ -85,7 +85,7 @@ int InitialisationAvecService(char *service) {
 	freeaddrinfo(ressave);
 	/* attends au max 4 clients */
 	listen(socketEcoute, 4);
-	printf("Creation du serveur reussie sur %s.\n", service);
+	printf("[*] Creation du serveur reussie sur %s.\n", service);
 
 	return 1;
 }
@@ -176,7 +176,7 @@ int Emission(char *message) {
         perror("Emission, probleme lors du send.");
         return 0;
 	}
-	printf("Emission de %d caracteres.\n", taille+1);
+	//printf("Emission de %d caracteres.\n", taille+1);
 	return 1;
 }
 

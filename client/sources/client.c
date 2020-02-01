@@ -106,7 +106,7 @@ int Emission(char *message) {
         perror("Emission, probleme lors du send.");
         return 0;
 	}
-	printf("Emission de %d caracteres.\n", taille+1);
+	//printf("Emission de %d caracteres.\n", taille+1);
 	return 1;
 }
 
@@ -189,7 +189,7 @@ int init(char **argv){
 	if(InitialisationAvecService(iterator2,iterator)!=1){
 		exit(1);
 	}
-	
+
 	return 0;
 }
 
@@ -198,29 +198,29 @@ int parseCommand(char *command){
 	strncpy(extract,command,500*sizeof(char));
 	char *code=strtok(extract," ");
 	if(strcmp(code,"login")==0){
-		printf("[+] Authentification\n");
+		printf("[*] Authentification\n");
 		login(command);
 	}
 	else if(strcmp(code,"register")==0){
-		printf("[+] Creating an account\n");
+		printf("[*] Creating an account\n");
 		reg(command);
 	}else if(strcmp(code,"modifyacc")==0){
-		printf("[+] Modifiying an existing account\n");
+		printf("[*] Modifiying an existing account\n");
 		modifyacc(command);
 	}else if(strcmp(code,"delacc")==0){
-		printf("[+] Deleting an existing account\n");
+		printf("[*] Deleting an existing account\n");
 		delacc(command);
 	}else if(strcmp(code,"dircreate")==0){
-		printf("[+] Creating a directory\n");
+		printf("[*] Creating a directory\n");
 		dircreate(command);
 	}else if(strcmp(code,"dirdelete")==0){
-		printf("[+] Deleting a directory\n");
+		printf("[*] Deleting a directory\n");
 		dirdelete(command);
 	}else if(strcmp(code,"dirdump")==0){
-		printf("[+] Dumping a directory\n");
+		printf("[*] Dumping a directory\n");
 		dirdump(command);
 	}else if(strcmp(code,"recordc")==0){
-		printf("[+] Creating a record\n");
+		printf("[*] Creating a record\n");
 		dir_recordCreate(command);
 	}
 	else {
@@ -263,7 +263,7 @@ int dircreate(char *command){
 	int len=0;
 	char *send=NULL;
 	char *recordIndex=strtok(command," ");
-	char *username=NULL;	
+	char *username=NULL;
 	recordIndex=strtok(NULL," ");
 	username=recordIndex;
 	recordIndex=strtok(NULL," ");
@@ -286,7 +286,7 @@ int dirdelete(char *command){
 	int len=0;
 	char *send=NULL;
 	char *recordIndex=strtok(command," ");
-	char *username=NULL;	
+	char *username=NULL;
 	recordIndex=strtok(NULL," ");
 	username=recordIndex;
 	recordIndex=strtok(NULL," ");
@@ -309,7 +309,7 @@ int dirdump(char *command){
 	int len=0;
 	char *send=NULL;
 	char *recordIndex=strtok(command," ");
-	char *username=NULL;	
+	char *username=NULL;
 	recordIndex=strtok(NULL," ");
 	username=recordIndex;
 	recordIndex=strtok(NULL," ");
@@ -332,7 +332,7 @@ int diraccess(char *command){
 	int len=0;
 	char *send=NULL;
 	char *targetedUser=strtok(command," ");
-	char *username=NULL;	
+	char *username=NULL;
 	targetedUser=strtok(NULL," ");
 	username=targetedUser;
 	targetedUser=strtok(NULL," ");
@@ -355,7 +355,7 @@ int dir_rrights(char *command){
 	int len=0;
 	char *send=NULL;
 	char *targetedUser=strtok(command," ");
-	char *username=NULL;	
+	char *username=NULL;
 	targetedUser=strtok(NULL," ");
 	username=targetedUser;
 	targetedUser=strtok(NULL," ");
@@ -374,12 +374,12 @@ int dir_rrights(char *command){
 }
 
 int modifyacc(char *command){
-	
+
 	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
 	int len=0;
 	char *send=NULL;
 	char *targetedUser=strtok(command," ");
-	char *username=NULL;	
+	char *username=NULL;
 	char *admin=NULL;
 	char *mode=NULL;
 	char *field=NULL;
@@ -419,7 +419,7 @@ int dir_recordCreate(char *command){
 	char *address=NULL;
 	char *email=NULL;
 	char *birthdate=NULL;
-	/*char *comments=NULL;*/	
+	/*char *comments=NULL;*/
 	username=strtok(NULL," ");
 	name=username;
 	name=strtok(NULL," ");
@@ -472,7 +472,7 @@ int reg(char *command){
 	char *send=NULL;
 	char *adminU=strtok(command," ");
 	char *modU=NULL;
-	char *ftc=NULL;	
+	char *ftc=NULL;
 	adminU=strtok(NULL," ");
 	modU=adminU;
 	modU=strtok(NULL," ");
@@ -504,7 +504,7 @@ int login(char *command){
 	int len=0;
 	char *send=NULL;
 	char *mdp=strtok(command," ");
-	char *id=NULL;	
+	char *id=NULL;
 	mdp=strtok(NULL," ");
 	id=mdp;
 	mdp=strtok(NULL," ");
@@ -520,9 +520,11 @@ int login(char *command){
 	if(retour==NULL){
 		exit(1);
 	}else if(strncmp(retour,"14",2*sizeof(char))==0){
-		printf("Connection denied\n");
+		printf("[!] Connection denied\n");
+		return 1;
+	}else if(strncmp(retour,"13",2*sizeof(char))==0){
+		printf("[*] Connection allowed\n");
 	}
-	/*need to add checks on return value*/
 	free(send);
 	return 0;
 }

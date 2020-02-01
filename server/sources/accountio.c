@@ -45,7 +45,6 @@ int seekAccount(char *filename, account a) {
 }
 
 boolean areLoginsEquals(account a, account b) {
-  printf("%s %s\n",a.username, b.username);
     return !strcmp(a.username, b.username);
 }
 

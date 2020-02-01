@@ -231,7 +231,7 @@ int parseCommand(char *command){
 }
 
 void print_cmdline_help(void){
-	printf("Syntax: \nlogin id mdp\nmodifyacc old_id new_id old_mdp new_mdp\n");
+	printf("Syntax: \n\tlogin id mdp\n\tmodifyacc old_id new_id old_mdp new_mdp\n\tregister login newuser newmdp\n");
 }
 
 int delacc(char *command){
@@ -246,11 +246,7 @@ int delacc(char *command){
 	to_delete=strtok(NULL, " ");
 	len=strlen(login)+strlen(to_delete)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"03");
-	strcat(send,login);
-	strcat(send," ");
-	strcat(send,to_delete);
-	strcat(send,"\n");
+	sprintf(send,"03 %s %s\n",login,to_delete);
 	Emission(send);
 	retour=Reception();
 	/*need to add checks on return value*/
@@ -269,11 +265,7 @@ int dircreate(char *command){
 	recordIndex=strtok(NULL," ");
 	len=strlen(username)+strlen(recordIndex)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"4 ");
-	strcat(send,username);
-	strcat(send," ");
-	strcat(send,recordIndex);
-	strcat(send,"\n");
+	sprintf(send,"04 %s %s\n",username,recordIndex);
 	Emission(send);
 	retour=Reception();
 	/*need to add checks on return value*/
@@ -292,11 +284,7 @@ int dirdelete(char *command){
 	recordIndex=strtok(NULL," ");
 	len=strlen(username)+strlen(recordIndex)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"5 ");
-	strcat(send,username);
-	strcat(send," ");
-	strcat(send,recordIndex);
-	strcat(send,"\n");
+	sprintf(send,"05 %s %s\n",username,recordIndex);
 	Emission(send);
 	retour=Reception();
 	/*need to add checks on return value*/
@@ -315,11 +303,7 @@ int dirdump(char *command){
 	recordIndex=strtok(NULL," ");
 	len=strlen(username)+strlen(recordIndex)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"6 ");
-	strcat(send,username);
-	strcat(send," ");
-	strcat(send,recordIndex);
-	strcat(send,"\n");
+	sprintf(send,"06 %s %s\n",username,recordIndex);
 	Emission(send);
 	retour=Reception();
 	/*need to add checks on return value*/
@@ -433,8 +417,6 @@ int dir_recordCreate(char *command){
 	email=strtok(NULL," ");
 	birthdate=email;
 	birthdate=strtok(NULL," ");
-	/*comments=birthdate;
-	comments=strtok(NULL," ");*/
 	if(username==NULL || name==NULL || firstname==NULL || phone==NULL || address==NULL || email==NULL || birthdate==NULL){
 		printf("[+] Wrong syntax\n");
 		free(retour);
@@ -442,24 +424,9 @@ int dir_recordCreate(char *command){
 	}
 	len=strlen(username)+strlen(name)+strlen(firstname)+strlen(phone)+strlen(address)+strlen(email)+strlen(birthdate)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"9 ");
-	strcat(send,username);
-	strcat(send," ");
-	strcat(send,name);
-	strcat(send," ");
-	strcat(send,firstname);
-	strcat(send," ");
-	strcat(send,phone);
-	strcat(send,"\n");
-	strcat(send,address);
-	strcat(send," ");
-	strcat(send,email);
-	strcat(send," ");
-	strcat(send,birthdate);
-	strcat(send,"\n");
+	sprintf(send,"09 %s %s %s %s %s %s %s\n",username,name,firstname,phone,address,email,birthdate);
 	Emission(send);
 	retour=Reception();
-	/*need to add checks on return value*/
 	free(send);
 	return 0;
 }
@@ -480,13 +447,7 @@ int reg(char *command){
 	ftc=strtok(NULL," ");
 	len=strlen(adminU)+strlen(modU)+strlen(ftc)+10;
 	send=calloc(1,sizeof(char)*len);
-	strcat(send,"01");
-	strcat(send,adminU);
-	strcat(send," ");
-	strcat(send,modU);
-	strcat(send," ");
-	strcat(send,ftc);
-	strcat(send,"\n");
+	sprintf(send,"01 %s %s %s\n",adminU,modU,ftc);
 	Emission(send);
 	retour=Reception();
 	if(retour==NULL){

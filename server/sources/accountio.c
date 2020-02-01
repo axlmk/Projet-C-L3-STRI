@@ -18,19 +18,15 @@ int readAccount(char *filename, account *a, int cur) {
 }
 
 int writeAccount(char *filename, account a, int cur) {
-
     FILE *f = fopen(filename, "r+b");
-
     if(!f)
         return 1;
-
     cur *= sizeof(account);
     fseek(f, cur, SEEK_SET);
     if(!fwrite(&a, sizeof(account), 1, f)) {
         fclose(f);
         return 2;
     }
-
     fclose(f);
     return 0;
 }
@@ -49,6 +45,7 @@ int seekAccount(char *filename, account a) {
 }
 
 boolean areLoginsEquals(account a, account b) {
+  printf("%s %s\n",a.username, b.username);
     return !strcmp(a.username, b.username);
 }
 

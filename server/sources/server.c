@@ -47,7 +47,7 @@ int Initialisation() {
 int InitialisationAvecService(char *service) {
 	int n;
 	const int on = 1;
-	struct addrinfo	hints, *res, *ressave;
+	struct addrinfo	hints, *res=NULL, *ressave=NULL;
 
 	hints.ai_flags = AI_PASSIVE;
 	hints.ai_family = AF_UNSPEC;

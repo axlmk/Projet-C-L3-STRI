@@ -49,7 +49,7 @@ int InitialisationAvecService(char *machine, char *service) {
 	hints.ai_socktype = SOCK_STREAM;
 
 	if ( (n = getaddrinfo(machine, service, &hints, &res)) != 0)  {
-     		fprintf(stderr, "Initialisation, erreur de getaddrinfo : %s", gai_strerror(n));
+     		fprintf(stderr, "[\033[0;31m!\033[0m] Initialisation, erreur de getaddrinfo : %s", gai_strerror(n));
      		return 0;
 	}
 	ressave = res;
@@ -66,7 +66,7 @@ int InitialisationAvecService(char *machine, char *service) {
 	} while ( (res = res->ai_next) != NULL);
 
 	if (res == NULL) {
-     		perror("Initialisation, erreur de connect.");
+     		perror("[\033[0;31m!\033[0m] Initialisation, erreur de connect.");
      		return 0;
 	}
 
@@ -185,7 +185,7 @@ int init(char **argv){
 	if(port<=80){
 		return 1;
 	}
-	printf("[+] Connecting to %s:%s\n",iterator2,iterator);
+	printf("[\033[0;32m*\033[0m] Connecting to %s:%s\n",iterator2,iterator);
 	if(InitialisationAvecService(iterator2,iterator)!=1){
 		exit(1);
 	}
@@ -198,33 +198,33 @@ int parseCommand(char *command){
 	strncpy(extract,command,500*sizeof(char));
 	char *code=strtok(extract," ");
 	if(strcmp(code,"login")==0){
-		printf("[*] Authentification\n");
+		printf("[\033[0;32m*\033[0m] Authentification\n");
 		login(command);
 	}
 	else if(strcmp(code,"register")==0){
-		printf("[*] Creating an account\n");
+		printf("[\033[0;32m*\033[0m] Creating an account\n");
 		reg(command);
 	}else if(strcmp(code,"modifyacc")==0){
-		printf("[*] Modifiying an existing account\n");
+		printf("[\033[0;32m*\033[0m] Modifiying an existing account\n");
 		modifyacc(command);
 	}else if(strcmp(code,"delacc")==0){
-		printf("[*] Deleting an existing account\n");
+		printf("[\033[0;32m*\033[0m] Deleting an existing account\n");
 		delacc(command);
 	}else if(strcmp(code,"dircreate")==0){
-		printf("[*] Creating a directory\n");
+		printf("[\033[0;32m*\033[0m] Creating a directory\n");
 		dircreate(command);
 	}else if(strcmp(code,"dirdelete")==0){
-		printf("[*] Deleting a directory\n");
+		printf("[\033[0;32m*\033[0m] Deleting a directory\n");
 		dirdelete(command);
 	}else if(strcmp(code,"dirdump")==0){
-		printf("[*] Dumping a directory\n");
+		printf("[\033[0;32m*\033[0m] Dumping a directory\n");
 		dirdump(command);
 	}else if(strcmp(code,"recordc")==0){
-		printf("[*] Creating a record\n");
+		printf("[\033[0;32m*\033[0m] Creating a record\n");
 		dir_recordCreate(command);
 	}
 	else {
-		printf("Bad command\n");
+		printf("[\033[0;31m!\033[0m] Bad command\n");
 		print_cmdline_help();
 	}
 	return 0;
@@ -481,10 +481,10 @@ int login(char *command){
 	if(retour==NULL){
 		exit(1);
 	}else if(strncmp(retour,"14",2*sizeof(char))==0){
-		printf("[!] Connection denied\n");
+		printf("[\033[0;31m!\033[0m] Connection denied\n");
 		return 1;
 	}else if(strncmp(retour,"13",2*sizeof(char))==0){
-		printf("[*] Connection allowed\n");
+		printf("[\033[0;32m*\033[0m] Connection allowed\n");
 	}
 	free(send);
 	return 0;

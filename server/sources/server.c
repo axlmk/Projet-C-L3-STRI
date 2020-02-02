@@ -85,7 +85,7 @@ int InitialisationAvecService(char *service) {
 	freeaddrinfo(ressave);
 	/* attends au max 4 clients */
 	listen(socketEcoute, 4);
-	printf("[*] Creation du serveur reussie sur %s.\n", service);
+	printf("[\033[0;32m*\033[0m] Creation du serveur reussie sur %s.\n", service);
 
 	return 1;
 }
@@ -99,11 +99,11 @@ int AttenteClient() {
 	clientAddr = (struct sockaddr*) malloc(longeurAdr);
 	socketService = accept(socketEcoute, clientAddr, &longeurAdr);
 	if (socketService == -1) {
-		perror("[!] AttenteClient, erreur de accept.");
+		perror("[\033[0;31m!\033[0m] AttenteClient, erreur de accept.");
 		return 0;
 	}
 	if(getnameinfo(clientAddr, longeurAdr, machine, NI_MAXHOST, NULL, 0, 0) == 0) {
-		printf("[*] Client sur la machine d'adresse %s connecte.\n", machine);
+		printf("[\033[0;32m*\033[0m] Client sur la machine d'adresse %s connecte.\n", machine);
 	} else {
 		printf("Client anonyme connecte.\n");
 	}
@@ -149,7 +149,7 @@ char *Reception() {
 				perror("Reception, erreur de recv.");
 				return NULL;
 			} else if(retour == 0) {
-				fprintf(stderr, "[*] Reception, le client a ferme la connexion.\n");
+				fprintf(stderr, "[\033[0;32m*\033[0m] Reception, le client a ferme la connexion.\n");
 				return NULL;
 			} else {
 				/*

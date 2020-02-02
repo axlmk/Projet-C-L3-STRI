@@ -198,13 +198,13 @@ int parseCommand(char *command){
 	strncpy(extract,command,500*sizeof(char));
 	char *code=strtok(extract," ");
 	if(strcmp(code,"login")==0){
-		printf("[\033[0;32m*\033[0m] Authentification\n");
 		login(command);
 	}
 	else if(strcmp(code,"register")==0){
 		printf("[\033[0;32m*\033[0m] Creating an account\n");
 		reg(command);
 	}else if(strcmp(code,"modifyacc")==0){
+		//Doesn't work
 		printf("[\033[0;32m*\033[0m] Modifiying an existing account\n");
 		modifyacc(command);
 	}else if(strcmp(code,"delacc")==0){
@@ -231,7 +231,7 @@ int parseCommand(char *command){
 }
 
 void print_cmdline_help(void){
-	printf("Syntax: \n\tlogin id mdp\n\tmodifyacc old_id new_id old_mdp new_mdp\n\tregister login newuser newmdp\n");
+	printf("Syntax: \n\tlogin id mdp\n\tmodifyacc old_id new_id old_mdp new_mdp (doesn't work)\n\tregister login newuser newmdp\n\tdelacc login user\n");
 }
 
 int delacc(char *command){

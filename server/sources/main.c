@@ -16,7 +16,7 @@ int main(void) {
     Initialisation();
     pdu rPdu, sPdu;
     rPdu.request = malloc(sizeof(char) * 200);
-	while(1) {
+	  while(1) {
 
     	int fini = 0;
 	    AttenteClient();

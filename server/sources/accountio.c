@@ -12,24 +12,21 @@ int readAccount(char *filename, account *a, int cur) {
         fclose(f);
         return 2;
     }
-    
+
     fclose(f);
     return 0;
 }
 
 int writeAccount(char *filename, account a, int cur) {
     FILE *f = fopen(filename, "r+b");
-
     if(!f)
         return 1;
-
     cur *= sizeof(account);
     fseek(f, cur, SEEK_SET);
     if(!fwrite(&a, sizeof(account), 1, f)) {
         fclose(f);
         return 2;
     }
-    
     fclose(f);
     return 0;
 }
@@ -86,7 +83,7 @@ pdu deleteAccount(char *request) {
         return res;
     }
 
-    //get all the account except the deleted one 
+    //get all the account except the deleted one
     int len = acclen(PATH_ACCOUNT_STORAGE);
     account *arr = malloc(sizeof(account) * (len) - 1);
     int i = 0, j = 0, err;
@@ -106,10 +103,18 @@ pdu deleteAccount(char *request) {
         if(strcmp(arr[j].username, settings[1]))
             j++;
     }
-    free(settings);
-
     //remove and re-write the account file
+
+    char *path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(settings[1]) + 1));
+    strcpy(path, PATH_STORAGE);
+    strcat(path, settings[1]);
+    free(settings);
     if (!remove(PATH_ACCOUNT_STORAGE)) {
+        if(!createFile(PATH_ACCOUNT_STORAGE)) {
+            res = generateReturnedPdu(KO, "Error from the server, problem creating file.\n");
+                free(arr);
+                return res;
+        }
         for(i=0;i<len-1;i++) {
             if((err = writeAccount(PATH_ACCOUNT_STORAGE, arr[i], i)) == 1) {
                 res = generateReturnedPdu(KO, "Error from the server, problem with file.\n");
@@ -122,9 +127,20 @@ pdu deleteAccount(char *request) {
                 return res;
             }
         }
+        if(remove(path)) {
+            res = generateReturnedPdu(KO, "Error from the server, file cannot be delete.\n");
+            free(arr);
+            return res;
+        }
+        free(path);
+
+    } else {
+        res = generateReturnedPdu(KO, "Error from the server, file cannot be delete.\n");
+        free(arr);
+        return res;
     }
-    else
-        res = generateReturnedPdu(OK, "Account file modified\n"); 
+
+    res = generateReturnedPdu(OK, "Account file modified\n");
     free(arr);
     return res;
 }
@@ -133,6 +149,7 @@ void getA_CParameters(char *request, char ***data) {
     int i=0;
     /*Parsage de la requète contenue dans la PDU en entrée*/
     (*data)[i] = strtok(request, " ");
+    i++;
     while(i<3){
         (*data)[i] = strtok(NULL, " ");
         i++;
@@ -146,7 +163,7 @@ oldUserName newUserName oldPassword newPassword*/
 pdu CreateAccount(char *request){
     char **data = malloc(sizeof(char *) * 3);
     pdu res;
-    getA_DParameters(request, &data);
+    getA_CParameters(request, &data);
 
     if(!A_DAuthorization(data[0])) {
         res = generateReturnedPdu(KO, "You'r not allowed to perform this operation\n");
@@ -162,7 +179,7 @@ pdu CreateAccount(char *request){
     if(seekAccount(PATH_ACCOUNT_STORAGE, temp) >= 0) {
         res = generateReturnedPdu(KO, "Error, account already exists.\n");
         free(data);
-        return res; 
+        return res;
     }
 
     /*Construction du nouveau chemin relatif permettant d'accéder au fichier de
@@ -175,7 +192,7 @@ pdu CreateAccount(char *request){
     if(!createFile(path)) {
         res = generateReturnedPdu(KO, "An error occured while creating the file.\n");
         free(path);
-        return res; 
+        return res;
     }
     if((len = acclen(PATH_ACCOUNT_STORAGE)) == -1) {
         res = generateReturnedPdu(KO, "An error occured while reading the file.\n");
@@ -184,7 +201,7 @@ pdu CreateAccount(char *request){
     }
     if((st = writeAccount(PATH_ACCOUNT_STORAGE, temp, len)) == 1) {
         res = generateReturnedPdu(KO, "An error occured while opening the file.\n");
-        free(path); 
+        free(path);
         return res;
     } else if(st == 2) {
          res = generateReturnedPdu(KO, "An error occured while writing the file.\n");
@@ -310,7 +327,7 @@ pdu ModifyAccount(char  *requete){
                 else{
                     return generateReturnedPdu(OK, "Success");
                 }
-            }  
+            }
         }
     }
 }

@@ -3,7 +3,9 @@
 
 pdu connectionAuthorized(char *request) {
 
-    char **settings = malloc(sizeof(char) * 2);
+    char **settings = malloc(sizeof(char *) * 2);
+    settings[0]=malloc(200*sizeof(char));
+    settings[1]=malloc(200*sizeof(char));
     getAuthParameters(request, &settings);
 
 
@@ -12,17 +14,27 @@ pdu connectionAuthorized(char *request) {
     strcpy(acc.username, settings[0]);
     strcpy(acc.password, settings[1]);
 
+    free(*settings);
+    free(*(settings+sizeof(char *)));
     free(settings);
 
-    if((res = seekAccount(PATH_ACCOUNT_STORAGE, acc)) == -1)
-        return generateReturnedPdu(KO, "An error occured, the storage file doesn't exist");
-    if(areCredentialsEquals(acc, t))
-       return generateReturnedPdu(OK, "Connection allowed");
+    if((res = seekAccount(PATH_ACCOUNT_STORAGE, acc)) == -2){
+      return generateReturnedPdu(KO, "An error occured, the storage file doesn't exist");
+    }
+    else if(res == -1){
+      return generateReturnedPdu(KO, "An error occured, the user doesn't exist");
+    }
+    if(readAccount(PATH_ACCOUNT_STORAGE, &t, res) == 2){
+      return generateReturnedPdu(KO, "An error occured while reading the file");
+    }
+    if(areCredentialsEquals(acc, t)){
+      return generateReturnedPdu(OK, "Connection allowed");
+    }
     return generateReturnedPdu(KO, "Connection denied");
 }
 
 boolean areCredentialsEquals(account a, account b) {
-    return !strcmp(a.username, b.username) && !strcmp(b.password, b.password);
+    return !strcmp(a.username, b.username) && !strcmp(a.password, b.password);
 }
 
 void getAuthParameters(char *request, char ***settings) {

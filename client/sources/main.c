@@ -12,7 +12,7 @@ int main(int argc,char **argv)
         return 1;
     }
     if(init(argv)){
-        printf("Incorrect arguments\n");
+        printf("[\033[0;31m!\033[0m] Incorrect arguments\n");
         return 1;
     }
     while(1){

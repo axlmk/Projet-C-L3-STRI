@@ -4,6 +4,8 @@
 #include "utils.h"
 #include "data_structures.h"
 #include "accountio.h"
+#include <dirent.h>
+#include <errno.h>
 
 /*
     Checks if the server was previously installed or not. Create the storage file and the admin user if it wasn't

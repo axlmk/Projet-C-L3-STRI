@@ -8,7 +8,7 @@
 #include "../headers/record.h"
 
 
-int main(int argc, char *argv[]) {
+int main(void) {
 
     char *message = NULL;
 
@@ -16,13 +16,16 @@ int main(int argc, char *argv[]) {
     Initialisation();
     pdu rPdu, sPdu;
     rPdu.request = malloc(sizeof(char) * 200);
-	while(1) {
-    
+	  while(1) {
+
     	int fini = 0;
 	    AttenteClient();
 
 		while(!fini) {
-			message = Reception();
+			      message = Reception();
+            if(!message){
+              return 0;
+            }
             messageToPDU(&rPdu, message);
             switch(rPdu.code) {
                 case AUTH:
@@ -67,7 +70,7 @@ int main(int argc, char *argv[]) {
 
 	}
 	TerminaisonClient();
-    
+
     free(rPdu.request);
 	return 0;
 }

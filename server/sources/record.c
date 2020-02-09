@@ -307,7 +307,6 @@ pdu deleteRecord(char *request) {
 
     numRecord = strtol(settings[1], NULL, 10);
     int res = writeRecord(path, r, numRecord);
-    fprintf(stderr, RED "%s\n" RESET, path);
     free(path);
 
     if(res == 1)

@@ -8,6 +8,7 @@
 #include <regex.h>
 
 int writeRecord(char *filename, record r, int cur);
+int readRecord(char *filename, record *a, int cur);
 pdu modifyRecord(char *request);
 boolean matchField(char *field, char *str_regex);
 pdu deleteRecord(char *request);

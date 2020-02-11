@@ -125,3 +125,11 @@ int writeDirectory(char *filename, directory t) {
             return res;
     return res;
 }
+
+int readDirectory(char *filename, directory t) {
+    int i, res = 0;
+    for(i=0;i<NRECORDS;i++)
+        if((res = readRecord(filename, &(t[i]), i)))
+            return res;
+    return res;
+}

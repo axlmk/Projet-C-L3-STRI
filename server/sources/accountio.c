@@ -6,12 +6,19 @@ int readAccount(char *filename, account *a, int cur) {
     if(!f)
         return 1;
 
-    cur *= sizeof(account);
+    int size = (sizeof(char) * LNAME) + (sizeof(char) * NDIRECTORY * LNAME) + (sizeof(char) * LPASS);
+    cur *= size;
     fseek(f, cur, SEEK_SET);
-    if(!fread(a, sizeof(account), 1, f)) {
+    if(!fread(a, size, 1, f)) {
         fclose(f);
         return 2;
     }
+
+    char *path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(a->username)));
+    sprintf(path, "%s%s", PATH_STORAGE, a->username);
+    fprintf(stderr, RED "DBG : %s\n" RESET, path);
+    readDirectory(path, a->ownedDirectory);
+    free(path);
 
     fclose(f);
     return 0;
@@ -21,12 +28,21 @@ int writeAccount(char *filename, account a, int cur) {
     FILE *f = fopen(filename, "r+b");
     if(!f)
         return 1;
-    cur *= sizeof(account);
+
+    int size = (sizeof(char) * LNAME) + (sizeof(char) * NDIRECTORY * LNAME) + (sizeof(char) * LPASS);
+    cur *= size;
     fseek(f, cur, SEEK_SET);
-    if(!fwrite(&a, sizeof(account), 1, f)) {
+    if(!fwrite(&a, size, 1, f)) {
         fclose(f);
         return 2;
     }
+
+    char *path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(a.username)));
+    sprintf(path, "%s%s", PATH_STORAGE, a.username);
+    fprintf(stderr, RED "DBG : %s\n" RESET, path);
+    writeDirectory(path, a.ownedDirectory);
+    free(path);
+
     fclose(f);
     return 0;
 }

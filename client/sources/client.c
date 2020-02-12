@@ -14,6 +14,9 @@
 
 #include "../headers/client.h"
 
+#include "../../server/headers/utils.h"
+#include "../../server/headers/pdu.h"
+
 #define TRUE 1
 #define FALSE 0
 
@@ -198,18 +201,18 @@ int parseCommand(char *command){
 	strncpy(extract,command,500*sizeof(char));
 	char *code=strtok(extract," ");
 	if(strcmp(code,"login")==0){
-		login(command);
+		connectionAuthorized(command);
 	}
-	else if(strcmp(code,"register")==0){
+	else if(strcmp(code,"createAccount")==0){
 		printf("[\033[0;32m*\033[0m] Creating an account\n");
-		reg(command);
-	}else if(strcmp(code,"modifyacc")==0){
+		createAccount(command);
+	}else if(strcmp(code,"modifyAccount")==0){
 		//Doesn't work
 		printf("[\033[0;32m*\033[0m] Modifiying an existing account\n");
-		modifyacc(command);
-	}else if(strcmp(code,"delacc")==0){
+		modifyAccount(command);
+	}else if(strcmp(code,"deleteAccount")==0){
 		printf("[\033[0;32m*\033[0m] Deleting an existing account\n");
-		delacc(command);
+		deleteAccount(command);
 	}else if(strcmp(code,"dircreate")==0){
 		printf("[\033[0;32m*\033[0m] Creating a directory\n");
 		dircreate(command);
@@ -219,9 +222,12 @@ int parseCommand(char *command){
 	}else if(strcmp(code,"dirdump")==0){
 		printf("[\033[0;32m*\033[0m] Dumping a directory\n");
 		dirdump(command);
-	}else if(strcmp(code,"recordc")==0){
+	}else if(strcmp(code,"createRecord")==0){
 		printf("[\033[0;32m*\033[0m] Creating a record\n");
-		dir_recordCreate(command);
+		createRecord(command);
+    }else if(strcmp(code,"modifyRecord")==0){
+		printf("[\033[0;32m*\033[0m] Modifying a record\n");
+		modifyRecord(command);
 	}
 	else {
 		printf("[\033[0;31m!\033[0m] Bad command\n");
@@ -231,10 +237,16 @@ int parseCommand(char *command){
 }
 
 void print_cmdline_help(void){
-	printf("Syntax: \n\tlogin id mdp\n\tmodifyacc old_id new_id old_mdp new_mdp (doesn't work)\n\tregister login newuser newmdp\n\tdelacc login user\n");
+	printf("Syntax: \n");
+    printf("\tlogin <id> <pass>\n");
+    printf("\t[FOR NOW] createAccount <admin_user> <username> <pass>\n");
+    printf("\t[FOR NOW] modifyAccount <admin_user> <username> <fieldName> <fieldValue>\n");
+    printf("\t[FOR NOW] deleteAccount <admin_user> <username>\n");
+    printf("\t[FOR NOW] createRecord <user> <record_number> name:<name> firstName:<fisrtName> email:<email> [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]\n");
+    printf("\t[FOR NOW] modifyRecord <user> <record_number> [name:<name>] [firstName:<fisrtName>] [email:<email>] [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]\n");
 }
 
-int delacc(char *command){
+int deleteAccount(char *command){
 	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
 	(void *)command;
 	(void *)retour;
@@ -357,7 +369,7 @@ int dir_rrights(char *command){
 	return 0;
 }
 
-int modifyacc(char *command){
+int modifyAccount(char *command){
 
 	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
 	int len=0;
@@ -389,8 +401,43 @@ int modifyacc(char *command){
 	return 0;
 }
 
-int dir_recordCreate(char *command){
-	/*comments not implemented*/
+int createRecord(char *command) {
+    char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
+    char *message;
+    pdu t = generateReturnedPdu(R_C, &(command[13]));
+    PDUToMessage(t, &message);
+    fprintf(stderr, RED "'%s'" RESET "\n", t.request);
+    Emission(message);
+    retour = Reception();
+    messageToPDU(&t, retour);
+    if(t.code == OK)
+        printf(GREEN "%s" RESET "\n", t.request);
+    else
+        printf(RED "%s" RESET "\n", t.request);
+    free(retour);
+    free(t.request);
+    return 0; 
+}
+
+int modifyRecord(char *command) {
+    char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
+    char *message;
+    pdu t = generateReturnedPdu(R_M, &(command[13]));
+    PDUToMessage(t, &message);
+    Emission(message);
+    retour = Reception();
+    messageToPDU(&t, retour);
+    if(t.code == OK)
+        printf(GREEN "%s" RESET "\n", t.request);
+    else
+        printf(RED "%s" RESET "\n", t.request);
+    free(retour);
+    free(t.request);
+    return 0; 
+}
+/*
+int createRecord2(char *command){
+	/*comments not implemented
 	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
 	(void *)command;
 	(void *)retour;
@@ -403,7 +450,7 @@ int dir_recordCreate(char *command){
 	char *address=NULL;
 	char *email=NULL;
 	char *birthdate=NULL;
-	/*char *comments=NULL;*/
+	/*char *comments=NULL;
 	username=strtok(NULL," ");
 	name=username;
 	name=strtok(NULL," ");
@@ -424,14 +471,18 @@ int dir_recordCreate(char *command){
 	}
 	len=strlen(username)+strlen(name)+strlen(firstname)+strlen(phone)+strlen(address)+strlen(email)+strlen(birthdate)+10;
 	send=calloc(1,sizeof(char)*len);
+
+    char test[100];
+    memset(test, 0, 100);
+    sprintf(test, "09 %s\n", &(command[12]));
 	sprintf(send,"09 %s %s %s %s %s %s %s\n",username,name,firstname,phone,address,email,birthdate);
-	Emission(send);
+	Emission(test);
 	retour=Reception();
 	free(send);
 	return 0;
-}
+}*/
 
-int reg(char *command){
+int createAccount(char *command){
 	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
 	(void *)command;
 	(void *)retour;
@@ -460,7 +511,7 @@ int reg(char *command){
 	return 0;
 }
 
-int login(char *command){
+int connectionAuthorized(char *command){
 	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
 	int len=0;
 	char *send=NULL;

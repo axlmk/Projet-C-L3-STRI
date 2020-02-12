@@ -138,7 +138,6 @@ pdu createRecord(char *request) {
                 free(settings);
                 return generateReturnedPdu(KO, "Error address size too long.\n");
             }
-            cmpt++;
             strcpy(r.address, field);
         } else if(!strcmp(field, "email")) {
             field = strtok(NULL, " ");
@@ -150,6 +149,7 @@ pdu createRecord(char *request) {
                 free(settings);
                 return generateReturnedPdu(KO, "Error address size too long.\n");
             }
+            cmpt++;
             strcpy(r.email, field);
         } else if(!strcmp(field, "birthDate")) {
             field = strtok(NULL, " ");
@@ -188,11 +188,11 @@ pdu createRecord(char *request) {
     free(path);
 
     if(res == 1)
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(KO, "Error from the request. File can't be opened\n");
     else if(res == 2)
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(KO, "Error from the request. File can't be writtent\n");
     else
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(OK, "Record created successfully\n");
 }
 
 
@@ -280,11 +280,11 @@ pdu modifyRecord(char *request) {
     free(path);
 
     if(res == 1)
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(KO, "Error from the request. Field can't be opened\n");
     else if(res == 2)
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(KO, "Error from the request. Field can't be written\n");
     else
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(OK, "Record changed successfully\n");
 }
 
 //request: username recordIndication

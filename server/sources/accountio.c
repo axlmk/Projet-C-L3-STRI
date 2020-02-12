@@ -99,7 +99,7 @@ pdu deleteAccount(char *request) {
         return res;
     }
 
-    //get all the account except the deleted one
+    //get all accounts excepted the deleted one 
     int len = acclen(PATH_ACCOUNT_STORAGE);
     account *arr = malloc(sizeof(account) * (len) - 1);
     int i = 0, j = 0, err;

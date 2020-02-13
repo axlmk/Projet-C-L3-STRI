@@ -310,9 +310,9 @@ pdu deleteRecord(char *request) {
     free(path);
 
     if(res == 1)
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(KO, "Error from the request. Field can't be opened\n");
     else if(res == 2)
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(KO, "Error from the request. Field can't be written\n");
     else
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(OK, "Record deleted successfully\n");
 }

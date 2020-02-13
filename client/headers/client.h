@@ -46,17 +46,6 @@ void Terminaison();
 void print_usage(char *pr_name);
 int init(char **argv);
 int parseCommand(char *command);
-int connectionAuthorized(char *command);
-int createAccount(char *command);
-int modifyAccount(char *command);
-int deleteAccount(char *command);
-int dircreate(char *command);
-int dirdelete(char *command);
-int dirdump(char *command);
-int diraccess(char *command);
-int dir_rrights(char *command);
-int createRecord(char *command);
-int modifyRecord(char *command) ;
-int record_modify(char *command);
+int executeCommand(char *command, pdu_code co);
 void print_cmdline_help(void);
 #endif

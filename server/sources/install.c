@@ -1,5 +1,6 @@
 #include "../headers/install.h"
 
+
 int initiateServer(void) {
     account t;
     strcpy(t.username, "admin");

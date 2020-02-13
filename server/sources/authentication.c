@@ -2,21 +2,16 @@
 
 
 pdu connectionAuthorized(char *request) {
-
-    char **settings = malloc(sizeof(char *) * 2);
-    settings[0]=malloc(200*sizeof(char));
-    settings[1]=malloc(200*sizeof(char));
-    getAuthParameters(request, &settings);
-
-
     account acc, t;
     int res = 0;
-    strcpy(acc.username, settings[0]);
-    strcpy(acc.password, settings[1]);
+    char **settings = malloc(sizeof(char *) * 2);
+    settings[0]=NULL;
+    settings[1]=NULL;
+    getAuthParameters(request, &settings);
 
-    free(*settings);
-    free(*(settings+sizeof(char *)));
-    free(settings);
+    strncpy(acc.username, settings[0],200*sizeof(char));
+    strncpy(acc.password, settings[1],200*sizeof(char));
+
 
     if((res = seekAccount(PATH_ACCOUNT_STORAGE, acc)) == -2){
       return generateReturnedPdu(KO, "An error occured, the storage file doesn't exist");

@@ -15,8 +15,8 @@ int main(void) {
     initiateServer();
     Initialisation();
     pdu rPdu, sPdu;
-    rPdu.request = malloc(sizeof(char) * 200);
-	while(1) {
+    rPdu.request = malloc(sizeof(char) * 200); //done by PAUL
+	  while(1) {
 
     	int fini = 0;
 	    AttenteClient();

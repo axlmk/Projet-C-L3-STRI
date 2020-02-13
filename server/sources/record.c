@@ -98,7 +98,7 @@ void clearRecord(record *r) {
 pdu createRecord(char *request) {
     int n;
     if(!(n = getSettingsNumber(request)))
-        return generateReturnedPdu(KO, "Error from the request.\n");
+        return generateReturnedPdu(KO, "Error from the request.");
     char **settings = malloc(sizeof(char*) * n);
     getR_MParameters(request, &settings, n);
     record r;
@@ -113,7 +113,7 @@ pdu createRecord(char *request) {
             field = strtok(NULL, " ");
             if(strlen(field) > LNAME) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error name size too long.\n");
+                return generateReturnedPdu(KO, "Error name size too long.");
             }
             cmpt++;
             strcpy(r.name, field);
@@ -121,7 +121,7 @@ pdu createRecord(char *request) {
             field = strtok(NULL, " ");
             if(strlen(field) > LNAME) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error first name size too long.\n");
+                return generateReturnedPdu(KO, "Error first name size too long.");
             }
             cmpt++;
             strcpy(r.firstName, field);
@@ -129,51 +129,51 @@ pdu createRecord(char *request) {
             field = strtok(NULL, " ");
             if(!matchField(field, "^[0-9]{10}$")) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error phone syntax doesn't match.\n");
+                return generateReturnedPdu(KO, "Error phone syntax doesn't match.");
             }
             strcpy(r.phone, field);
         } else if(!strcmp(field, "address")) {
             field = strtok(NULL, " ");
             if(strlen(field) > LADDRESS) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error address size too long.\n");
+                return generateReturnedPdu(KO, "Error address size too long.");
             }
-            cmpt++;
             strcpy(r.address, field);
         } else if(!strcmp(field, "email")) {
             field = strtok(NULL, " ");
             if(!matchField(field, "^[-_.[:alnum:]]+@[-_[:alnum:]]+\\.[[:alnum:]]{2,4}$")) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error email syntax doesn't match.\n");
+                return generateReturnedPdu(KO, "Error email syntax doesn't match.");
             }
             if(strlen(field) > LADDRESS) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error address size too long.\n");
+                return generateReturnedPdu(KO, "Error address size too long.");
             }
+            cmpt++;
             strcpy(r.email, field);
         } else if(!strcmp(field, "birthDate")) {
             field = strtok(NULL, " ");
             if(!matchField(field, "^[0-9]{2}/[0-9]{2}/[0-9]{4}$")) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error birthdate syntax doesn't match.\n");
+                return generateReturnedPdu(KO, "Error birthdate syntax doesn't match.");
             }
             strcpy(r.birthDate, field);
         } else if(!strcmp(field, "comment")) {
             field = strtok(NULL, " ");
             if(strlen(field) > LCOMMENTS) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error address size too long.\n");
+                return generateReturnedPdu(KO, "Error address size too long.");
             }
             strcpy(r.comments, field);
         } else {
             free(settings);
-            return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+            return generateReturnedPdu(KO, "Error from the request. Field not valid");
         }
     }
     
     if(cmpt < 3) {
         free(settings);
-        return generateReturnedPdu(KO, "Error, the name, first name and email fields are mandatory to create a record.\n");
+        return generateReturnedPdu(KO, "Error, the name, first name and email fields are mandatory to create a record.");
     }
 
     int len = strlen(PATH_STORAGE) + strlen(settings[0]) + 1;
@@ -188,11 +188,11 @@ pdu createRecord(char *request) {
     free(path);
 
     if(res == 1)
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(KO, "Error from the request. File can't be opened");
     else if(res == 2)
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(KO, "Error from the request. File can't be writtent");
     else
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(OK, "Record created successfully");
 }
 
 
@@ -200,7 +200,7 @@ pdu createRecord(char *request) {
 pdu modifyRecord(char *request) {
     int n;
     if(!(n = getSettingsNumber(request)))
-        return generateReturnedPdu(KO, "Error from the request.\n");
+        return generateReturnedPdu(KO, "Error from the request.");
     char **settings = malloc(sizeof(char*) * n);
     getR_MParameters(request, &settings, n);
     record r;
@@ -213,58 +213,58 @@ pdu modifyRecord(char *request) {
             field = strtok(NULL, " ");
             if(strlen(field) > LNAME) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error name size too long.\n");
+                return generateReturnedPdu(KO, "Error name size too long.");
             }
             strcpy(r.name, field);
         } else if(!strcmp(field, "firstName")) {
             field = strtok(NULL, " ");
             if(strlen(field) > LNAME) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error first name size too long.\n");
+                return generateReturnedPdu(KO, "Error first name size too long.");
             }
             strcpy(r.firstName, field);
         } else if(!strcmp(field, "phone")) {
             field = strtok(NULL, " ");
             if(!matchField(field, "^[0-9]{10}$")) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error phone syntax doesn't match.\n");
+                return generateReturnedPdu(KO, "Error phone syntax doesn't match.");
             }
             strcpy(r.phone, field);
         } else if(!strcmp(field, "address")) {
             field = strtok(NULL, " ");
             if(strlen(field) > LADDRESS) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error address size too long.\n");
+                return generateReturnedPdu(KO, "Error address size too long.");
             }
             strcpy(r.address, field);
         } else if(!strcmp(field, "email")) {
             field = strtok(NULL, " ");
             if(!matchField(field, "^[-_.[:alnum:]]+@[-_[:alnum:]]+\\.[[:alnum:]]{2,4}$")) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error email syntax doesn't match.\n");
+                return generateReturnedPdu(KO, "Error email syntax doesn't match.");
             }
             if(strlen(field) > LADDRESS) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error address size too long.\n");
+                return generateReturnedPdu(KO, "Error address size too long.");
             }
             strcpy(r.email, field);
         } else if(!strcmp(field, "birthDate")) {
             field = strtok(NULL, " ");
             if(!matchField(field, "^[0-9]{2}/[0-9]{2}/[0-9]{4}$")) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error birthdate syntax doesn't match.\n");
+                return generateReturnedPdu(KO, "Error birthdate syntax doesn't match.");
             }
             strcpy(r.birthDate, field);
         } else if(!strcmp(field, "comment")) {
             field = strtok(NULL, " ");
             if(strlen(field) > LCOMMENTS) {
                 free(settings);
-                return generateReturnedPdu(KO, "Error address size too long.\n");
+                return generateReturnedPdu(KO, "Error address size too long.");
             }
             strcpy(r.comments, field);
         } else {
             free(settings);
-            return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+            return generateReturnedPdu(KO, "Error from the request. Field not valid");
         }
     }
     
@@ -280,18 +280,18 @@ pdu modifyRecord(char *request) {
     free(path);
 
     if(res == 1)
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(KO, "Error from the request. Field can't be opened");
     else if(res == 2)
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(KO, "Error from the request. Field can't be written");
     else
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(OK, "Record changed successfully");
 }
 
 //request: username recordIndication
 pdu deleteRecord(char *request) {
     int n;
     if(!(n = getSettingsNumber(request)))
-        return generateReturnedPdu(KO, "Error from the request.\n");
+        return generateReturnedPdu(KO, "Error from the request.");
 
     char **settings = malloc(sizeof(char*) * 2);
     getR_MParameters(request, &settings, 2);
@@ -307,13 +307,12 @@ pdu deleteRecord(char *request) {
 
     numRecord = strtol(settings[1], NULL, 10);
     int res = writeRecord(path, r, numRecord);
-    fprintf(stderr, RED "%s\n" RESET, path);
     free(path);
 
     if(res == 1)
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(KO, "Error from the request. Field can't be opened");
     else if(res == 2)
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(KO, "Error from the request. Field can't be written");
     else
-        return generateReturnedPdu(KO, "Error from the request. Field not valid\n");
+        return generateReturnedPdu(OK, "Record deleted successfully");
 }

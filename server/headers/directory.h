@@ -55,5 +55,6 @@ pdu rmReader(char *request);
 boolean isFull(account a);
 
 int writeDirectory(char *filename, directory t);
+int readDirectory(char *filename, directory t);
 
 #endif

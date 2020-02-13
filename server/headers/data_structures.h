@@ -48,8 +48,8 @@ typedef record directory[NRECORDS];
 typedef struct account {
     char username[LNAME];
     char password[LPASS];
-    directory ownedDirectory;
     char sharedDirectory[NDIRECTORY][LNAME];
+    directory ownedDirectory;
 } account;
 
 /* The 'request' field must be terminated by a '\n' character and then a '\0' character */

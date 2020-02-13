@@ -193,299 +193,183 @@ int init(char **argv){
 	return 0;
 }
 
-int parseCommand(char *command){
+int parseCommand(char *command, account *user) {
 	char extract[500];
 	strncpy(extract,command,500*sizeof(char));
 	char *code=strtok(extract," ");
 	if(strcmp(code,"login")==0){
-		printf("[\033[0;32m*\033[0m] Authentification\n");
-		login(command);
-	}
-	else if(strcmp(code,"register")==0){
-		printf("[\033[0;32m*\033[0m] Creating an account\n");
-		reg(command);
-	}else if(strcmp(code,"modifyacc")==0){
-		printf("[\033[0;32m*\033[0m] Modifiying an existing account\n");
-		modifyacc(command);
-	}else if(strcmp(code,"delacc")==0){
-		printf("[\033[0;32m*\033[0m] Deleting an existing account\n");
-		delacc(command);
-	}else if(strcmp(code,"dircreate")==0){
-		printf("[\033[0;32m*\033[0m] Creating a directory\n");
-		dircreate(command);
-	}else if(strcmp(code,"dirdelete")==0){
-		printf("[\033[0;32m*\033[0m] Deleting a directory\n");
-		dirdelete(command);
-	}else if(strcmp(code,"dirdump")==0){
-		printf("[\033[0;32m*\033[0m] Dumping a directory\n");
-		dirdump(command);
-	}else if(strcmp(code,"recordc")==0){
-		printf("[\033[0;32m*\033[0m] Creating a record\n");
-		dir_recordCreate(command);
-	}
-	else {
-		printf("[\033[0;31m!\033[0m] Bad command\n");
+        printf("[" GREEN "*" RESET "] Logging\n");
+		//printf("%d\n", executeCommand(command, AUTH, user));
+        executeCommand(command, AUTH, user);
+	} else if(strcmp(code,"createAccount")==0){
+		printf("[" GREEN "*" RESET "] Creating an account\n");
+		//printf("%d\n", executeCommand(command, A_C, user));
+        executeCommand(command, A_C, user);
+	} else if(strcmp(code,"modifyAccount")==0){
+		printf("[" GREEN "*" RESET "] Modifying an account\n");
+		//printf("%d\n", executeCommand(command, A_M, user));
+        executeCommand(command, A_M, user);
+	} else if(strcmp(code,"deleteAccount")==0){
+		printf("[" GREEN "*" RESET "] Deleting an account\n");
+		//printf("%d\n", executeCommand(command, A_D, user));
+        executeCommand(command, A_D, user);
+	} else if(strcmp(code,"dirdump")==0){
+		printf("[" GREEN "*" RESET "] Displaying a directory\n");
+		//printf("%d\n", executeCommand(command, D_D, user));
+        executeCommand(command, D_D, user);
+	} else if(strcmp(code,"createRecord")==0){
+		printf("[" GREEN "*" RESET "] Creating a record\n");
+		//printf("%d\n", executeCommand(command, R_C, user));
+        executeCommand(command, R_C, user);
+    } else if(strcmp(code,"modifyRecord")==0){
+		printf("[" GREEN "*" RESET "] Modifying an account\n");
+		//printf("%d\n", executeCommand(command, R_M, user));
+        executeCommand(command, R_M, user);
+	} else if(strcmp(code,"deleteRecord")==0){
+		printf("[" GREEN "*" RESET "] Deleting an account\n");
+		//printf("%d\n", executeCommand(command, R_D, user));
+        executeCommand(command, R_D, user);
+	} else {
+		printf("[" RED "!" RESET "] Bad command\n");
 		print_cmdline_help();
 	}
 	return 0;
 }
 
 void print_cmdline_help(void){
-	printf("Syntax: \n\tlogin id mdp\n\tmodifyacc old_id new_id old_mdp new_mdp\n\tregister login newuser newmdp\n");
+	printf("Syntax: \n");
+    printf("\tlogin <id> <pass>\n");
+    printf("\tcreateAccount <username> <pass>\n");
+    printf("\tmodifyAccount <username> <fieldName> <fieldValue>\n");
+    printf("\tdeleteAccount <username>\n");
+    printf("\tcreateRecord <record_number> name:<name> firstName:<fisrtName> email:<email> [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]\n");
+    printf("\tmodifyRecord <record_number> [name:<name>] [firstName:<fisrtName>] [email:<email>] [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]\n");
+    printf("\tdeleteRecord <record_number>\n");
 }
 
-int delacc(char *command){
-	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
-	(void *)command;
-	(void *)retour;
-	int len=0;
-	char *send=NULL;
-	char *login=strtok(command," ");
-	char *to_delete=NULL;
-	login=strtok(NULL," ");
-	to_delete=strtok(NULL, " ");
-	len=strlen(login)+strlen(to_delete)+10;
-	send=calloc(1,sizeof(char)*len);
-	sprintf(send,"03 %s %s\n",login,to_delete);
-	Emission(send);
-	retour=Reception();
-	/*need to add checks on return value*/
-	free(send);
-	return 0;
+boolean isSyntaxCorrect(char *command, pdu_code co) {
+    char *token = NULL;
+    char delim[2] = " ";
+    char *temp_str = malloc(sizeof(char) * (strlen(command) + 1));
+    strcpy(temp_str, command);
+    token = strtok(temp_str, delim);
+  
+    int i = 0;
+    while(token) {
+        i++;
+        token = strtok(NULL, delim);
+    }
+    switch (co) {
+        case AUTH:
+            if(i!=3)
+                return FALSE;
+        break;
+        case A_C:
+            if(i!=3)
+                return FALSE;
+        break;
+        case A_M:
+            if(i!=3)
+                return FALSE;
+        break;
+        case A_D:
+            if(i!=2)
+                return FALSE;
+        break;
+        case R_C:
+            if(i<5 || i>8)
+                return FALSE;
+        break;
+        case R_M:
+            if(i<3 || i>8)
+                return FALSE;
+        break;
+        case R_D:
+            if(i!=2)
+                return FALSE;
+        break;
+        default:
+            fprintf(stderr, "[" RED "!" RESET "] : " RED "Unknowned command." RESET "\n");
+    }
+    return TRUE;
 }
 
-int dircreate(char *command){
-	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
-	int len=0;
-	char *send=NULL;
-	char *recordIndex=strtok(command," ");
-	char *username=NULL;
-	recordIndex=strtok(NULL," ");
-	username=recordIndex;
-	recordIndex=strtok(NULL," ");
-	len=strlen(username)+strlen(recordIndex)+10;
-	send=calloc(1,sizeof(char)*len);
-	sprintf(send,"04 %s %s\n",username,recordIndex);
-	Emission(send);
-	retour=Reception();
-	/*need to add checks on return value*/
-	free(send);
-	return 0;
+boolean isLogged(account a) {
+    if(strlen(a.username))
+        return TRUE;
+    return FALSE;
 }
 
-int dirdelete(char *command){
-	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
-	int len=0;
-	char *send=NULL;
-	char *recordIndex=strtok(command," ");
-	char *username=NULL;
-	recordIndex=strtok(NULL," ");
-	username=recordIndex;
-	recordIndex=strtok(NULL," ");
-	len=strlen(username)+strlen(recordIndex)+10;
-	send=calloc(1,sizeof(char)*len);
-	sprintf(send,"05 %s %s\n",username,recordIndex);
-	Emission(send);
-	retour=Reception();
-	/*need to add checks on return value*/
-	free(send);
-	return 0;
+char *showSyntax(pdu_code co) {
+    switch (co) {
+        case A_C:
+            return "createAccount <username> <pass>";
+        case A_M:
+            return "modifyAccount <field> <new_value>";   
+        case A_D:
+            return "deleteAccount <username>";   
+        case AUTH:
+            return "login <username> <pass>";   
+        case R_C:
+            return "createRecord <record_number> name:<name> firstName:<fisrtName> email:<email> [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]";   
+        case R_M:
+            return "modifyRecord <record_number> [name:<name>] [firstName:<fisrtName>] [email:<email>] [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]";   
+        case R_D:
+            return "deleteRecord <record_number>";    
+        default:
+            return "Command doesn't exist";
+    }
 }
 
-int dirdump(char *command){
-	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
-	int len=0;
-	char *send=NULL;
-	char *recordIndex=strtok(command," ");
-	char *username=NULL;
-	recordIndex=strtok(NULL," ");
-	username=recordIndex;
-	recordIndex=strtok(NULL," ");
-	len=strlen(username)+strlen(recordIndex)+10;
-	send=calloc(1,sizeof(char)*len);
-	sprintf(send,"06 %s %s\n",username,recordIndex);
-	Emission(send);
-	retour=Reception();
-	/*need to add checks on return value*/
-	free(send);
-	return 0;
+char *clearRequest(char *command) {
+    return &(strchr(command, ' ')[1]);
 }
 
-int diraccess(char *command){
+int executeCommand(char *command, pdu_code co, account *user){
 	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
-	int len=0;
-	char *send=NULL;
-	char *targetedUser=strtok(command," ");
-	char *username=NULL;
-	targetedUser=strtok(NULL," ");
-	username=targetedUser;
-	targetedUser=strtok(NULL," ");
-	len=strlen(username)+strlen(targetedUser)+10;
-	send=calloc(1,sizeof(char)*len);
-	strcat(send,"7 ");
-	strcat(send,username);
-	strcat(send," ");
-	strcat(send,targetedUser);
-	strcat(send,"\n");
-	Emission(send);
-	retour=Reception();
-	/*need to add checks on return value*/
-	free(send);
-	return 0;
-}
+    char *message;
+    char *name;
+    if(!isSyntaxCorrect(command, co)) {
+        printf("[" RED "!" RESET "] Syntax incorrect. Valid syntax:\n");
+        printf("\t%s\n", showSyntax(co));
+        return 3;
+    }
 
-int dir_rrights(char *command){
-	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
-	int len=0;
-	char *send=NULL;
-	char *targetedUser=strtok(command," ");
-	char *username=NULL;
-	targetedUser=strtok(NULL," ");
-	username=targetedUser;
-	targetedUser=strtok(NULL," ");
-	len=strlen(username)+strlen(targetedUser)+10;
-	send=calloc(1,sizeof(char)*len);
-	strcat(send,"8 ");
-	strcat(send,username);
-	strcat(send," ");
-	strcat(send,targetedUser);
-	strcat(send,"\n");
-	Emission(send);
-	retour=Reception();
-	/*need to add checks on return value*/
-	free(send);
-	return 0;
-}
+    char *pduRequest;
+    name = clearRequest(command);
+    if(co != AUTH) {
+        if(!isLogged(*user)) {
+            printf("[" RED "!" RESET "] : " RED "You must be logged to use this command" RESET "\n");
+            return 1;
+        }
+        pduRequest = malloc(sizeof(char) * (strlen(user->username) + 2 + strlen(name)));
+        sprintf(pduRequest, "%s %s", user->username, name);
+    } else {
+        pduRequest = name;
+    }
 
-int modifyacc(char *command){
+    pdu t = generateReturnedPdu(co, pduRequest);
+    PDUToMessage(t, &message);
 
-	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
-	int len=0;
-	char *send=NULL;
-	char *targetedUser=strtok(command," ");
-	char *username=NULL;
-	char *admin=NULL;
-	char *mode=NULL;
-	char *field=NULL;
-	admin=strtok(NULL," ");
-	username=strtok(NULL," ");
-	mode=strtok(NULL," ");
-	field=strtok(NULL," ");
-	len=strlen(username)+strlen(targetedUser)+strlen(admin)+strlen(mode)+strlen(field)+10;
-	send=calloc(1,sizeof(char)*len);
-	strcat(send,"02");
-	strcat(send,admin);
-	strcat(send," ");
-	strcat(send,username);
-	strcat(send, " ");
-	strcat(send, mode);
-	strcat(send, " ");
-	strcat(send, field);
-	strcat(send,"\n");
-	Emission(send);
-	retour=Reception();
-	/*need to add checks on return value*/
-	free(send);
-	return 0;
-}
+    Emission(message);
+    retour = Reception();
 
-int dir_recordCreate(char *command){
-	/*comments not implemented*/
-	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
-	(void *)command;
-	(void *)retour;
-	int len=0;
-	char *send=NULL;
-	char *username=strtok(command," ");
-	char *name=NULL;
-	char *firstname=NULL;
-	char *phone=NULL;
-	char *address=NULL;
-	char *email=NULL;
-	char *birthdate=NULL;
-	/*char *comments=NULL;*/
-	username=strtok(NULL," ");
-	name=username;
-	name=strtok(NULL," ");
-	firstname=name;
-	firstname=strtok(NULL," ");
-	phone=firstname;
-	phone=strtok(NULL," ");
-	address=phone;
-	address=strtok(NULL," ");
-	email=address;
-	email=strtok(NULL," ");
-	birthdate=email;
-	birthdate=strtok(NULL," ");
-	if(username==NULL || name==NULL || firstname==NULL || phone==NULL || address==NULL || email==NULL || birthdate==NULL){
-		printf("[+] Wrong syntax\n");
-		free(retour);
-		return 1;
-	}
-	len=strlen(username)+strlen(name)+strlen(firstname)+strlen(phone)+strlen(address)+strlen(email)+strlen(birthdate)+10;
-	send=calloc(1,sizeof(char)*len);
-	sprintf(send,"09 %s %s %s %s %s %s %s\n",username,name,firstname,phone,address,email,birthdate);
-	Emission(send);
-	retour=Reception();
-	free(send);
-	return 0;
-}
-
-int reg(char *command){
-	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
-	(void *)command;
-	(void *)retour;
-	int len=0;
-	char *send=NULL;
-	char *adminU=strtok(command," ");
-	char *modU=NULL;
-	char *ftc=NULL;
-	adminU=strtok(NULL," ");
-	modU=adminU;
-	modU=strtok(NULL," ");
-	ftc=modU;
-	ftc=strtok(NULL," ");
-	len=strlen(adminU)+strlen(modU)+strlen(ftc)+10;
-	send=calloc(1,sizeof(char)*len);
-	sprintf(send,"01 %s %s %s\n",adminU,modU,ftc);
-	Emission(send);
-	retour=Reception();
-	if(retour==NULL){
-		exit(1);
-	}else if(strncmp(retour,"14",2*sizeof(char))==0){
-		printf("Unauthorized\n");
-	}
-	/*need to add checks on return value*/
-	free(send);
-	return 0;
-}
-
-int login(char *command){
-	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
-	int len=0;
-	char *send=NULL;
-	char *mdp=strtok(command," ");
-	char *id=NULL;
-	mdp=strtok(NULL," ");
-	id=mdp;
-	mdp=strtok(NULL," ");
-	len=strlen(id)+strlen(mdp)+10;
-	send=calloc(1,sizeof(char)*len);
-	strcat(send,"0 ");
-	strcat(send,id);
-	strcat(send," ");
-	strcat(send,mdp);
-	strcat(send,"\n");
-	Emission(send);
-	retour=Reception();
-	if(retour==NULL){
-		exit(1);
-	}else if(strncmp(retour,"14",2*sizeof(char))==0){
-		printf("[\033[0;31m!\033[0m] Connection denied\n");
-		return 1;
-	}else if(strncmp(retour,"13",2*sizeof(char))==0){
-		printf("[\033[0;32m*\033[0m] Connection allowed\n");
-	}
-	free(send);
-	return 0;
+    messageToPDU(&t, retour);
+    if(t.code == OK) {
+        if(co == AUTH) {
+            int u = 0;
+            char *name = clearRequest(command);
+            memset(user->username, 0, LNAME);
+            while(name[u] != ' ') {
+                user->username[u] = name[u];
+                u++;
+            }
+        }
+        printf("[" GREEN "*" RESET "] : " GREEN "%s" RESET "\n", t.request);
+    }
+    else
+        printf("[" RED "!" RESET "] : " RED "%s" RESET "\n", t.request);
+    free(retour);
+    free(t.request);
+    return 0; 
 }

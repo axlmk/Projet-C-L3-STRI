@@ -1,6 +1,10 @@
 #ifndef __CLIENT_H__
 #define __CLIENT_H__
 
+#include "../../server/headers/utils.h"
+#include "../../server/headers/pdu.h"
+#include "../../server/headers/data_structures.h"
+
 /* Initialisation.
  * Connexion au serveur sur la machine donnee.
  * Utilisez localhost pour un fonctionnement local.
@@ -45,7 +49,11 @@ void Terminaison();
 
 void print_usage(char *pr_name);
 int init(char **argv);
-int parseCommand(char *command);
-int executeCommand(char *command, pdu_code co);
+int parseCommand(char *command, account *user);
+int executeCommand(char *command, pdu_code co, account *user);
+char *clearRequest(char *command);
+char *showSyntax(pdu_code co);
+boolean isLogged(account a);
+boolean isSyntaxCorrect(char *command, pdu_code co);
 void print_cmdline_help(void);
 #endif

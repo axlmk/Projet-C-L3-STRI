@@ -14,10 +14,6 @@
 
 #include "../headers/client.h"
 
-#include "../../server/headers/utils.h"
-#include "../../server/headers/pdu.h"
-#include "../../server/headers/data_structures.h"
-
 #define TRUE 1
 #define FALSE 0
 
@@ -197,33 +193,42 @@ int init(char **argv){
 	return 0;
 }
 
-int parseCommand(char *command){
+int parseCommand(char *command, account *user) {
 	char extract[500];
 	strncpy(extract,command,500*sizeof(char));
 	char *code=strtok(extract," ");
 	if(strcmp(code,"login")==0){
-		connectionAuthorized(command);
+        printf("[" GREEN "*" RESET "] Logging\n");
+		//printf("%d\n", executeCommand(command, AUTH, user));
+        executeCommand(command, AUTH, user);
 	} else if(strcmp(code,"createAccount")==0){
 		printf("[" GREEN "*" RESET "] Creating an account\n");
-		executeCommand(command, A_C);
+		//printf("%d\n", executeCommand(command, A_C, user));
+        executeCommand(command, A_C, user);
 	} else if(strcmp(code,"modifyAccount")==0){
 		printf("[" GREEN "*" RESET "] Modifying an account\n");
-		executeCommand(command, A_M);
+		//printf("%d\n", executeCommand(command, A_M, user));
+        executeCommand(command, A_M, user);
 	} else if(strcmp(code,"deleteAccount")==0){
 		printf("[" GREEN "*" RESET "] Deleting an account\n");
-		executeCommand(command, A_D);
+		//printf("%d\n", executeCommand(command, A_D, user));
+        executeCommand(command, A_D, user);
 	} else if(strcmp(code,"dirdump")==0){
 		printf("[" GREEN "*" RESET "] Displaying a directory\n");
-		executeCommand(command, D_D);
+		//printf("%d\n", executeCommand(command, D_D, user));
+        executeCommand(command, D_D, user);
 	} else if(strcmp(code,"createRecord")==0){
 		printf("[" GREEN "*" RESET "] Creating a record\n");
-		executeCommand(command, R_C);
+		//printf("%d\n", executeCommand(command, R_C, user));
+        executeCommand(command, R_C, user);
     } else if(strcmp(code,"modifyRecord")==0){
 		printf("[" GREEN "*" RESET "] Modifying an account\n");
-		executeCommand(command, R_M);
+		//printf("%d\n", executeCommand(command, R_M, user));
+        executeCommand(command, R_M, user);
 	} else if(strcmp(code,"deleteRecord")==0){
 		printf("[" GREEN "*" RESET "] Deleting an account\n");
-		executeCommand(command, R_D);
+		//printf("%d\n", executeCommand(command, R_D, user));
+        executeCommand(command, R_D, user);
 	} else {
 		printf("[" RED "!" RESET "] Bad command\n");
 		print_cmdline_help();
@@ -234,12 +239,12 @@ int parseCommand(char *command){
 void print_cmdline_help(void){
 	printf("Syntax: \n");
     printf("\tlogin <id> <pass>\n");
-    printf("\t[FOR NOW] createAccount <admin_user> <username> <pass>\n");
-    printf("\t[FOR NOW] modifyAccount <admin_user> <username> <fieldName> <fieldValue>\n");
-    printf("\t[FOR NOW] deleteAccount <admin_user> <username>\n");
-    printf("\t[FOR NOW] createRecord <user> <record_number> name:<name> firstName:<fisrtName> email:<email> [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]\n");
-    printf("\t[FOR NOW] modifyRecord <user> <record_number> [name:<name>] [firstName:<fisrtName>] [email:<email>] [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]\n");
-    printf("\t[FOR NOW] deleteRecord <user> <record_number>\n");
+    printf("\tcreateAccount <username> <pass>\n");
+    printf("\tmodifyAccount <username> <fieldName> <fieldValue>\n");
+    printf("\tdeleteAccount <username>\n");
+    printf("\tcreateRecord <record_number> name:<name> firstName:<fisrtName> email:<email> [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]\n");
+    printf("\tmodifyRecord <record_number> [name:<name>] [firstName:<fisrtName>] [email:<email>] [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]\n");
+    printf("\tdeleteRecord <record_number>\n");
 }
 
 boolean isSyntaxCorrect(char *command, pdu_code co) {
@@ -249,16 +254,30 @@ boolean isSyntaxCorrect(char *command, pdu_code co) {
     strcpy(temp_str, command);
     token = strtok(temp_str, delim);
   
-    switch (co) {
-        case A_C:
-            while( token != NULL ) {
-                //TO-CHANGE
-                printf( " %s\n", token );
-                token = strtok(NULL, s);
-            }
-
+    if(co == AUTH) {
+        int i = 0;
+        while(token) {
+            i++;
+            token = strtok(NULL, delim);
+        }
+        if(i!=3)
+            return FALSE;
+    } else if(co == A_C) {
+        int i = 0;
+        while(token) {
+            i++;
+            token = strtok(NULL, delim);
+        }
+        if(i!=3)
+            return FALSE;
     }
     return TRUE;
+}
+
+boolean isLogged(account a) {
+    if(strlen(a.username))
+        return TRUE;
+    return FALSE;
 }
 
 char *showSyntax(pdu_code co) {
@@ -271,30 +290,51 @@ char *showSyntax(pdu_code co) {
 }
 
 char *clearRequest(char *command) {
-    int i = 0;
-    while(command[i++] != ' ');
-    return &(command[i+1]);
+    return &(strchr(command, ' ')[1]);
 }
 
-int executeCommand(char *command, pdu_code co){
+int executeCommand(char *command, pdu_code co, account *user){
 	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
     char *message;
+    char *name;
     if(!isSyntaxCorrect(command, co)) {
         printf("[" RED "!" RESET "] The syntax for the choosen command isn't correct. This is the valid way:\n");
         printf("\t%s\n", showSyntax(co));
+        return 3;
     }
 
-    pdu t = generateReturnedPdu(co, clearRequest(command));
+    char *pduRequest;
+    name = clearRequest(command);
+    if(co != AUTH) {
+        if(!isLogged(*user))
+            return 1;
+        pduRequest = malloc(sizeof(char) * (strlen(user->username) + 2 + strlen(name)));
+        sprintf(pduRequest, "%s %s", user->username, name);
+    } else {
+        pduRequest = name;
+    }
+
+    pdu t = generateReturnedPdu(co, pduRequest);
     PDUToMessage(t, &message);
 
     Emission(message);
     retour = Reception();
 
     messageToPDU(&t, retour);
-    if(t.code == OK)
-        printf("[" GREEN "*" RESET "] :" GREEN "%s" RESET "\n", t.request);
+    if(t.code == OK) {
+        if(co == AUTH) {
+            int u = 0;
+            char *name = clearRequest(command);
+            memset(user->username, 0, LNAME);
+            while(name[u] != ' ') {
+                user->username[u] = name[u];
+                u++;
+            }
+        }
+        printf("[" GREEN "*" RESET "] : " GREEN "%s" RESET "\n", t.request);
+    }
     else
-        printf("[" RED "!" RESET "] :" RED "%s" RESET "\n", t.request);
+        printf("[" RED "!" RESET "] : " RED "%s" RESET "\n", t.request);
     free(retour);
     free(t.request);
     return 0; 

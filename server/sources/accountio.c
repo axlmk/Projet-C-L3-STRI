@@ -94,7 +94,7 @@ pdu deleteAccount(char *request) {
     char **settings = malloc(sizeof(char*) * 2);
     getA_DParameters(request, &settings);
     if(!A_DAuthorization(settings[0])) {
-        res = generateReturnedPdu(KO, "You'r not allowed to perform this operation\n");
+        res = generateReturnedPdu(KO, "You'r not allowed to perform this operation.");
         free(settings);
         return res;
     }
@@ -106,12 +106,12 @@ pdu deleteAccount(char *request) {
 
     for(i=0;i<len;i++) {
         if((err = readAccount(PATH_ACCOUNT_STORAGE, &arr[j], i)) == 1) {
-            res = generateReturnedPdu(KO, "Error from the server, file doesn.\n");
+            res = generateReturnedPdu(KO, "Error from the server, file doesn.");
             free(arr);
             free(settings);
             return res;
         } else if(err == 2) {
-            res = generateReturnedPdu(KO, "Error from the server, problem with read.\n");
+            res = generateReturnedPdu(KO, "Error from the server, problem with read.");
             free(arr);
             free(settings);
             return res;
@@ -127,36 +127,36 @@ pdu deleteAccount(char *request) {
     free(settings);
     if (!remove(PATH_ACCOUNT_STORAGE)) {
         if(!createFile(PATH_ACCOUNT_STORAGE)) {
-            res = generateReturnedPdu(KO, "Error from the server, problem creating file.\n");
+            res = generateReturnedPdu(KO, "Error from the server, problem creating file.");
                 free(arr);
                 return res;
         }
         for(i=0;i<len-1;i++) {
             if((err = writeAccount(PATH_ACCOUNT_STORAGE, arr[i], i)) == 1) {
-                res = generateReturnedPdu(KO, "Error from the server, problem with file.\n");
+                res = generateReturnedPdu(KO, "Error from the server, problem with file.");
                 free(arr);
                 return res;
             }
             else if(err == 2) {
-                res = generateReturnedPdu(KO, "Error from the server, problem with write.\n");
+                res = generateReturnedPdu(KO, "Error from the server, problem with write.");
                 free(arr);
                 return res;
             }
         }
         if(remove(path)) {
-            res = generateReturnedPdu(KO, "Error from the server, file cannot be delete.\n");
+            res = generateReturnedPdu(KO, "Error from the server, file cannot be delete.");
             free(arr);
             return res;
         }
         free(path);
 
     } else {
-        res = generateReturnedPdu(KO, "Error from the server, file cannot be delete.\n");
+        res = generateReturnedPdu(KO, "Error from the server, file cannot be delete.");
         free(arr);
         return res;
     }
 
-    res = generateReturnedPdu(OK, "Account file modified\n");
+    res = generateReturnedPdu(OK, "Account file modified");
     free(arr);
     return res;
 }
@@ -182,7 +182,7 @@ pdu CreateAccount(char *request){
     getA_CParameters(request, &data);
 
     if(!A_DAuthorization(data[0])) {
-        res = generateReturnedPdu(KO, "You'r not allowed to perform this operation\n");
+        res = generateReturnedPdu(KO, "You'r not allowed to perform this operation");
         free(data);
         return res;
     }
@@ -193,7 +193,7 @@ pdu CreateAccount(char *request){
     strcpy(temp.username, data[1]);
     strcpy(temp.password, data[2]);
     if(seekAccount(PATH_ACCOUNT_STORAGE, temp) >= 0) {
-        res = generateReturnedPdu(KO, "Error, account already exists.\n");
+        res = generateReturnedPdu(KO, "Error, account already exists.");
         free(data);
         return res;
     }
@@ -206,31 +206,31 @@ pdu CreateAccount(char *request){
     free(data);
 
     if(!createFile(path)) {
-        res = generateReturnedPdu(KO, "An error occured while creating the file.\n");
+        res = generateReturnedPdu(KO, "An error occured while creating the file.");
         free(path);
         return res;
     }
     if((len = acclen(PATH_ACCOUNT_STORAGE)) == -1) {
-        res = generateReturnedPdu(KO, "An error occured while reading the file.\n");
+        res = generateReturnedPdu(KO, "An error occured while reading the file.");
         free(path);
         return res;
     }
     if((st = writeAccount(PATH_ACCOUNT_STORAGE, temp, len)) == 1) {
-        res = generateReturnedPdu(KO, "An error occured while opening the file.\n");
+        res = generateReturnedPdu(KO, "An error occured while opening the file.");
         free(path);
         return res;
     } else if(st == 2) {
-         res = generateReturnedPdu(KO, "An error occured while writing the file.\n");
+         res = generateReturnedPdu(KO, "An error occured while writing the file.");
         free(path);
         return res;
     }
 
     if((st = writeDirectory(path, temp.ownedDirectory)) == 1) {
-        res = generateReturnedPdu(KO, "An error occured while opening the file.\n");
+        res = generateReturnedPdu(KO, "An error occured while opening the file.");
         free(path);
         return res;
     } else if(st == 2) {
-         res = generateReturnedPdu(KO, "An error occured while writing the file.\n");
+         res = generateReturnedPdu(KO, "An error occured while writing the file.");
         free(path);
         return res;
     }
@@ -261,7 +261,7 @@ pdu ModifyAccount(char  *requete){
 
     if(!A_DAuthorization(tokens[0])) {
         free(tokens);
-        return generateReturnedPdu(KO, "You'r not allowed to perform this operation\n");
+        return generateReturnedPdu(KO, "You'r not allowed to perform this operation");
     }
 
     /*Modification du compte*/
@@ -312,7 +312,7 @@ pdu ModifyAccount(char  *requete){
                 strcat(path, temp.username);
                 if(remove(path)!=0) {
                     free(path);
-                    return generateReturnedPdu(KO, "An error occured while removing the file.\n");
+                    return generateReturnedPdu(KO, "An error occured while removing the file.");
                 }
 
                 strcpy(temp.username, tokens[3]);
@@ -322,17 +322,17 @@ pdu ModifyAccount(char  *requete){
 
                 if(createFile(path)==0) {
                     free(path);
-                    return generateReturnedPdu(KO, "An error occured while creating the file.\n");
+                    return generateReturnedPdu(KO, "An error occured while creating the file.");
                 }
 
                 err = writeDirectory(path, temp.ownedDirectory);
                 if(err==1) {
                     free(path);
-                    return generateReturnedPdu(KO, "An error occured while opening the file.\n");
+                    return generateReturnedPdu(KO, "An error occured while opening the file.");
                 }
                 else if(err == 2) {
                     free(path);
-                    return generateReturnedPdu(KO, "An error occured while writing the file.\n");
+                    return generateReturnedPdu(KO, "An error occured while writing the file.");
                 }
                 if (writeAccount(PATH_ACCOUNT_STORAGE,temp,pos)==-2){
                     return generateReturnedPdu(KO, "An error occured, the file doesn't exist");

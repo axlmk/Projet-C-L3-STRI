@@ -254,22 +254,42 @@ boolean isSyntaxCorrect(char *command, pdu_code co) {
     strcpy(temp_str, command);
     token = strtok(temp_str, delim);
   
-    if(co == AUTH) {
-        int i = 0;
-        while(token) {
-            i++;
-            token = strtok(NULL, delim);
-        }
-        if(i!=3)
-            return FALSE;
-    } else if(co == A_C) {
-        int i = 0;
-        while(token) {
-            i++;
-            token = strtok(NULL, delim);
-        }
-        if(i!=3)
-            return FALSE;
+    int i = 0;
+    while(token) {
+        i++;
+        token = strtok(NULL, delim);
+    }
+    switch (co) {
+        case AUTH:
+            if(i!=3)
+                return FALSE;
+        break;
+        case A_C:
+            if(i!=3)
+                return FALSE;
+        break;
+        case A_M:
+            if(i!=3)
+                return FALSE;
+        break;
+        case A_D:
+            if(i!=2)
+                return FALSE;
+        break;
+        case R_C:
+            if(i<5 || i>8)
+                return FALSE;
+        break;
+        case R_M:
+            if(i<3 || i>8)
+                return FALSE;
+        break;
+        case R_D:
+            if(i!=2)
+                return FALSE;
+        break;
+        default:
+            fprintf(stderr, "[" RED "!" RESET "] : " RED "Unknowned command." RESET "\n");
     }
     return TRUE;
 }
@@ -283,7 +303,19 @@ boolean isLogged(account a) {
 char *showSyntax(pdu_code co) {
     switch (co) {
         case A_C:
-            return "[FOR NOW] createAccount <admin_user> <username> <pass>";   
+            return "createAccount <username> <pass>";
+        case A_M:
+            return "modifyAccount <field> <new_value>";   
+        case A_D:
+            return "deleteAccount <username>";   
+        case AUTH:
+            return "login <username> <pass>";   
+        case R_C:
+            return "createRecord <record_number> name:<name> firstName:<fisrtName> email:<email> [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]";   
+        case R_M:
+            return "modifyRecord <record_number> [name:<name>] [firstName:<fisrtName>] [email:<email>] [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]";   
+        case R_D:
+            return "deleteRecord <record_number>";    
         default:
             return "Command doesn't exist";
     }
@@ -298,7 +330,7 @@ int executeCommand(char *command, pdu_code co, account *user){
     char *message;
     char *name;
     if(!isSyntaxCorrect(command, co)) {
-        printf("[" RED "!" RESET "] The syntax for the choosen command isn't correct. This is the valid way:\n");
+        printf("[" RED "!" RESET "] Syntax incorrect. Valid syntax:\n");
         printf("\t%s\n", showSyntax(co));
         return 3;
     }
@@ -306,8 +338,10 @@ int executeCommand(char *command, pdu_code co, account *user){
     char *pduRequest;
     name = clearRequest(command);
     if(co != AUTH) {
-        if(!isLogged(*user))
+        if(!isLogged(*user)) {
+            printf("[" RED "!" RESET "] : " RED "You must be logged to use this command" RESET "\n");
             return 1;
+        }
         pduRequest = malloc(sizeof(char) * (strlen(user->username) + 2 + strlen(name)));
         sprintf(pduRequest, "%s %s", user->username, name);
     } else {

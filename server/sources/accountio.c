@@ -16,7 +16,6 @@ int readAccount(char *filename, account *a, int cur) {
 
     char *path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(a->username)));
     sprintf(path, "%s%s", PATH_STORAGE, a->username);
-    fprintf(stderr, RED "DBG : %s\n" RESET, path);
     readDirectory(path, a->ownedDirectory);
     free(path);
 
@@ -39,7 +38,6 @@ int writeAccount(char *filename, account a, int cur) {
 
     char *path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(a.username)));
     sprintf(path, "%s%s", PATH_STORAGE, a.username);
-    fprintf(stderr, RED "DBG : %s\n" RESET, path);
     writeDirectory(path, a.ownedDirectory);
     free(path);
 

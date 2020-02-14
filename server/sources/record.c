@@ -1,100 +1,5 @@
 #include "../headers/record.h"
 
-int writeRecord(char *filename, record r, int cur) {
-    FILE *f = fopen(filename, "r+b");
-
-    if(!f)
-        return 1;
-
-    cur *= sizeof(record);
-    fseek(f, cur, SEEK_SET);
-    if(!fwrite(&r, sizeof(record), 1, f)) {
-        fclose(f);
-        return 2;
-    }
-
-    fclose(f);
-    return 0;
-}
-
-int readRecord(char *filename, record *a, int cur) {
-    FILE *f = fopen(filename, "rb");
-
-    if(!f)
-        return 1;
-
-    cur *= sizeof(record);
-    fseek(f, cur, SEEK_SET);
-    if(!fread(a, sizeof(record), 1, f)) {
-        fclose(f);
-        return 2;
-    }
-
-    fclose(f);
-    return 0;
-}
-
-int getSettingsNumber(char *request) {
-    int count = 1, i = 0;
-    while(request[i++])
-        if(request[i] == ' ')
-            count++;
-    return count;
-}
-
-void getR_MParameters(char *request, char ***settings, int N) {
-    int i = 0;
-    (*settings)[i] = strtok(request, " ");
-    for(i=1;i<N;i++)
-        (*settings)[i] = strtok(NULL, " ");
-}
-
-boolean matchField(char *field, char *str_regex) {
-   int err;
-   regex_t preg;
-
-   err = regcomp(&preg, str_regex, REG_NOSUB | REG_EXTENDED);
-   if (!err) {
-        int match;
-
-        match = regexec (&preg, field, 0, NULL, 0);
-        regfree (&preg);
-
-        if(!match)
-            return TRUE;
-        else if (match == REG_NOMATCH)
-            return FALSE;
-        else {
-            char *text;
-            size_t size;
-
-            size = regerror (err, &preg, NULL, 0);
-            text = malloc (sizeof (*text) * size);
-            if (text) {
-                regerror (err, &preg, text, size);
-                fprintf (stderr, "%s\n", text);
-                free (text);
-            }
-            else {
-                fprintf (stderr, "Not enough memory\n");
-            }
-            return FALSE;
-        }
-   }
-   fprintf(stderr, "Error compiling the regexp\n");
-   return FALSE;
-}
-
-void clearRecord(record *r) {
-    memset(r->address, 0, LADDRESS);
-    memset(r->phone, 0, 11);
-    memset(r->birthDate, 0, 11);
-    memset(r->firstName, 0, LNAME);
-    memset(r->name, 0, LNAME);
-    memset(r->email, 0, LADDRESS);
-    memset(r->comments, 0, LCOMMENTS);
-}
-
 pdu createRecord(char *request) {
     int n;
     if(!(n = getSettingsNumber(request)))
@@ -196,7 +101,6 @@ pdu createRecord(char *request) {
 }
 
 
-//request : user recordIndication field:value [field:value]...
 pdu modifyRecord(char *request) {
     int n;
     if(!(n = getSettingsNumber(request)))
@@ -287,7 +191,6 @@ pdu modifyRecord(char *request) {
         return generateReturnedPdu(OK, "Record changed successfully");
 }
 
-//request: username recordIndication
 pdu deleteRecord(char *request) {
     int n;
     if(!(n = getSettingsNumber(request)))
@@ -315,4 +218,56 @@ pdu deleteRecord(char *request) {
         return generateReturnedPdu(KO, "Error from the request. Field can't be written");
     else
         return generateReturnedPdu(OK, "Record deleted successfully");
+}
+
+pdu displayRecord(char *request) {
+    char **data = malloc(sizeof(char *) * 3);
+    pdu res;
+    getR_DParameters(request, &data);
+
+    record r;
+    char *path;
+    if(!strcmp(data[1], "me")) {
+        if(!R_DAuthorization(data[0], NULL)) {
+            res = generateReturnedPdu(KO, "You'r not allowed to perform this operation");
+            free(data);
+            return res;
+        }
+        path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(data[0]) + 1));
+        sprintf(path, "%s%s", PATH_STORAGE, data[0]);
+    } else {
+        if(!R_DAuthorization(data[0], data[1])) {
+            res = generateReturnedPdu(KO, "You'r not allowed to perform this operation");
+            free(data);
+            return res;
+        }
+        path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(data[1]) + 1));
+        sprintf(path, "%s%s", PATH_STORAGE, data[1]);
+    }
+
+    int resu;
+    if((resu = readRecord(path, &r, strtol(data[2], NULL, 10))) == 1) {
+        res = generateReturnedPdu(KO, "Error opening file");
+        free(data);
+        free(path);
+        return res;
+    } else if(resu == 2) {
+        res = generateReturnedPdu(KO, "Error reading file");
+        free(data);
+        free(path);
+        return res;
+    }
+
+    free(path);
+    free(data);
+
+
+    char *display = malloc(sizeof(char) * (97 + strlen(data[2]) + LNAME + LNAME + 11 + LADDRESS + LADDRESS + 11 + LCOMMENTS));
+
+    //Record n:||Name: ||First name: ||Email: ||Phone number: ||Address: ''||Birth date: ||Comments: ''
+    sprintf(display, "Record number %ld:\n\tName: %s\n\tFirst name: %s\n\tEmail: %s\n\tPhone number :%s\n\tAddress: '%s'\n\tBirth date: %s\n\tComments: '%s'", strtol(data[2], NULL, 10), r.name, r.firstName, r.email, r.phone, r.address, r.birthDate, r.comments);
+    res = generateReturnedPdu(OK, display);
+    free(display);
+    return res;
+
 }

@@ -9,6 +9,8 @@
 #include "install.h"
 #include "directory.h"
 
+/* ------- ACCOUNIO ------- */
+
 /*
     Gets an account from a binary file.
     Input:
@@ -57,6 +59,10 @@ int writeAccount(char *filename, account a, int cur);
         -1 : The account has not been found
         [0, infinite] : The index of the found account
 */
+
+/* ------- ACCOUNT_UTILS ------- */
+
+
 int seekAccount(char *filename, account a);
 
 /*
@@ -87,14 +93,6 @@ void getA_DParameters(char *request, char ***settings);
 */
 boolean A_DAuthorization(char *login);
 
-/*
-    Deletes an account from the storage account file
-    Input:
-        request : char * : The request sent by the client
-    Return:
-        The formatted pdu to send
-*/
-pdu deleteAccount(char *request);
 
 /*
     Counts the number of accounts presents in the storage account file
@@ -106,7 +104,50 @@ pdu deleteAccount(char *request);
 */
 int acclen(char *filename);
 
-pdu CreateAccount(char *request);
-pdu ModifyAccount(char  *requete);
+/*
+    Clear the strings composing the account structure
+    Output:
+        account : account * : The account to clear
+*/
+void clearAccount(account *t);
+
+/*
+    Parses the request string into the settings array according to the A_C rules
+    Input:
+        request : char * : The request to parse
+    Output:
+        settints : char *** : The array containing the parsed elements
+*/
+void getA_CParameters(char *request, char ***data);
+
+/*
+    Parses the request string into the settings array according to the A_M rules
+    Input:
+        request : char * : The request to parse
+    Output:
+        settints : char *** : The array containing the parsed elements
+*/
+void getA_MParameters(char *request, char ***data);
+
+/* ------- ACCOUNT ------- */
+
+/*
+    Deletes an account from the storage account file
+    Input:
+        request : char * : The request sent by the client
+    Return:
+        The formatted pdu to send
+*/
+pdu deleteAccount(char *request);
+
+/*
+    TO FILL
+*/
+pdu createAccount(char *request);
+
+/*
+    TO FILL
+*/
+pdu modifyAccount(char  *requete);
 
 #endif

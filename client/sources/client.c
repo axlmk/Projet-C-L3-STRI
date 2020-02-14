@@ -17,7 +17,7 @@
 #define TRUE 1
 #define FALSE 0
 
-#define LONGUEUR_TAMPON 4096
+#define LONGUEUR_TAMPON 8092
 
 /* Variables cachees */
 
@@ -185,7 +185,7 @@ int init(char **argv){
 	if(port<=80){
 		return 1;
 	}
-	printf("[\033[0;32m*\033[0m] Connecting to %s:%s\n",iterator2,iterator);
+	printf("[" GREEN "*" RESET "] Connecting to %s:%s\n",iterator2,iterator);
 	if(InitialisationAvecService(iterator2,iterator)!=1){
 		exit(1);
 	}
@@ -196,7 +196,8 @@ int init(char **argv){
 int parseCommand(char *command, account *user) {
 	char extract[500];
 	strncpy(extract,command,500*sizeof(char));
-	char *code=strtok(extract," ");
+	char *code=strtok(extract," \n");
+
 	if(strcmp(code,"login")==0){
         printf("[" GREEN "*" RESET "] Logging\n");
 		//printf("%d\n", executeCommand(command, AUTH, user));
@@ -213,10 +214,14 @@ int parseCommand(char *command, account *user) {
 		printf("[" GREEN "*" RESET "] Deleting an account\n");
 		//printf("%d\n", executeCommand(command, A_D, user));
         executeCommand(command, A_D, user);
-	} else if(strcmp(code,"dirdump")==0){
+	} else if(strcmp(code,"displayDirectory")==0){
 		printf("[" GREEN "*" RESET "] Displaying a directory\n");
 		//printf("%d\n", executeCommand(command, D_D, user));
-        executeCommand(command, D_D, user);
+        executeCommand(command, D_P, user);
+    } else if(strcmp(code,"displayRecord")==0){
+		printf("[" GREEN "*" RESET "] Displaying a directory\n");
+		//printf("%d\n", executeCommand(command, D_D, user));
+        executeCommand(command, R_P, user);
 	} else if(strcmp(code,"createRecord")==0){
 		printf("[" GREEN "*" RESET "] Creating a record\n");
 		//printf("%d\n", executeCommand(command, R_C, user));
@@ -229,8 +234,16 @@ int parseCommand(char *command, account *user) {
 		printf("[" GREEN "*" RESET "] Deleting an account\n");
 		//printf("%d\n", executeCommand(command, R_D, user));
         executeCommand(command, R_D, user);
+	} else if(strcmp(code,"addReader")==0){
+		printf("[" GREEN "*" RESET "] Adding an account\n");
+		//printf("%d\n", executeCommand(command, R_D, user));
+        executeCommand(command, D_A, user);
+	} else if(strcmp(code,"rmReader")==0){
+		printf("[" GREEN "*" RESET "] Removing an account\n");
+		//printf("%d\n", executeCommand(command, R_D, user));
+        executeCommand(command, D_R, user);
 	} else {
-		printf("[" RED "!" RESET "] Bad command\n");
+		printf("[" RED "!" RESET "] Bad commslkjand\n");
 		print_cmdline_help();
 	}
 	return 0;
@@ -238,13 +251,17 @@ int parseCommand(char *command, account *user) {
 
 void print_cmdline_help(void){
 	printf("Syntax: \n");
-    printf("\tlogin <id> <pass>\n");
-    printf("\tcreateAccount <username> <pass>\n");
-    printf("\tmodifyAccount <username> <fieldName> <fieldValue>\n");
-    printf("\tdeleteAccount <username>\n");
-    printf("\tcreateRecord <record_number> name:<name> firstName:<fisrtName> email:<email> [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]\n");
-    printf("\tmodifyRecord <record_number> [name:<name>] [firstName:<fisrtName>] [email:<email>] [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]\n");
-    printf("\tdeleteRecord <record_number>\n");
+    printf("\t- " MAGENTA "login" RESET " <id> <pass>\n");
+    printf("\t- " MAGENTA "createAccount" RESET " <username> <pass>\n");
+    printf("\t- " MAGENTA "modifyAccount" RESET " <username> <fieldName> <fieldValue>\n");
+    printf("\t- " MAGENTA "deleteAccount" RESET " <username>\n");
+    printf("\t- " MAGENTA "createRecord" RESET " <record_number> name:<name> firstName:<fisrtName> email:<email> [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]\n");
+    printf("\t- " MAGENTA "modifyRecord" RESET " <record_number> [name:<name>] [firstName:<fisrtName>] [email:<email>] [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]\n");
+    printf("\t- " MAGENTA "deleteRecord" RESET " <record_number>\n");
+    printf("\t- " MAGENTA "addReader" RESET " <username>\n");
+    printf("\t- " MAGENTA "rmReader" RESET " <username>\n");
+    printf("\t- " MAGENTA "displayDirectory" RESET " me|<username>\n");
+    printf("\t- " MAGENTA "displayRecord" RESET " me|<username> <record_number>\n");
 }
 
 boolean isSyntaxCorrect(char *command, pdu_code co) {
@@ -269,7 +286,7 @@ boolean isSyntaxCorrect(char *command, pdu_code co) {
                 return FALSE;
         break;
         case A_M:
-            if(i!=3)
+            if(i!=4)
                 return FALSE;
         break;
         case A_D:
@@ -286,6 +303,22 @@ boolean isSyntaxCorrect(char *command, pdu_code co) {
         break;
         case R_D:
             if(i!=2)
+                return FALSE;
+        break;
+        case D_A:
+            if(i!=2)
+                return FALSE;
+        break;
+        case D_R:
+            if(i!=2)
+                return FALSE;
+        break;
+        case D_P:
+            if(i!=2)
+                return FALSE;
+        break;
+        case R_P:
+            if(i!=3)
                 return FALSE;
         break;
         default:
@@ -315,7 +348,15 @@ char *showSyntax(pdu_code co) {
         case R_M:
             return "modifyRecord <record_number> [name:<name>] [firstName:<fisrtName>] [email:<email>] [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]";   
         case R_D:
-            return "deleteRecord <record_number>";    
+            return "deleteRecord <record_number>";
+        case D_A:
+            return "addReader <username>";
+        case D_R:
+            return "rmReader <username>";
+        case D_P:
+            return "displayDirectory me|<username>";
+        case R_P:
+            return "displayRecord me|<username> <record_number>";
         default:
             return "Command doesn't exist";
     }
@@ -326,9 +367,10 @@ char *clearRequest(char *command) {
 }
 
 int executeCommand(char *command, pdu_code co, account *user){
-	char *retour=malloc(LONGUEUR_TAMPON*sizeof(char));
+	char *retour;//=malloc(LONGUEUR_TAMPON*sizeof(char));
     char *message;
-    char *name;
+    char *name=NULL;
+
     if(!isSyntaxCorrect(command, co)) {
         printf("[" RED "!" RESET "] Syntax incorrect. Valid syntax:\n");
         printf("\t%s\n", showSyntax(co));

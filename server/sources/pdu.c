@@ -14,6 +14,8 @@ int messageToPDU(pdu *p, char *m) {
         p->code += (m[0] - 48) * 10;
     if(m[1] >= 48 && m[1] < 58)
         p->code += (m[1] - 48);
+    free(p->request);
+    p->request = malloc(sizeof(char) * (strlen(&m[2]) + 1));
     strcpy(p->request, &m[2]);
     p->request[strlen(p->request) - 1] = '\0';
     return 0;

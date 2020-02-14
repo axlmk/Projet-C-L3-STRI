@@ -3,8 +3,10 @@
 
 #include "utils.h"
 #include "pdu.h"
-#include "accountio.h"
+#include "account.h"
 #include "record.h"
+
+/* ------- DIRECTORY_UTILS ------- */
 
 /*
     Parses the request string into the settings array according to D_A rules
@@ -28,6 +30,27 @@ void getD_AParameters(char *request, char ***settings);
 int userHasDirectory(account a, char *directoryName);
 
 /*
+    Determines if the user can has an additional directory
+    Input:
+        a : account : The user we want to check
+    Return
+        TRUE or FALSE
+*/
+boolean isFull(account a);
+
+/*
+    TO FILL
+*/
+int writeDirectory(char *filename, directory t);
+
+/*
+    TO FILL
+*/
+int readDirectory(char *filename, directory t);
+
+/* ------- RECORD ------- */
+
+/*
     Allows a user to have a read only access on the directory of the requesting user
     Input:
         request : char * : The request sent by the client
@@ -46,15 +69,8 @@ pdu addReader(char *request);
 pdu rmReader(char *request);
 
 /*
-    Determines if the user can has an additional directory
-    Input:
-        a : account : The user we want to check
-    Return
-        TRUE or FALSE
+    TO FILL
 */
-boolean isFull(account a);
-
-int writeDirectory(char *filename, directory t);
-int readDirectory(char *filename, directory t);
+pdu displayDirectory(char *request);
 
 #endif

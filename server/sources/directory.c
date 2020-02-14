@@ -1,28 +1,4 @@
 #include "../headers/directory.h"
-#include "../headers/record.h"
-
-void getD_AParameters(char *request, char ***settings) {
-    (*settings)[0] = strtok(request, " ");
-    (*settings)[1] = strtok(NULL, "\n");
-}
-
-int userHasDirectory(account a, char *directoryName) {
-    int i;
-    for(i=0;i<NDIRECTORY;i++) {   
-        if(!strcmp(a.sharedDirectory[i], directoryName))
-            return i;
-    }
-    return -1;
-}
-
-boolean isFull(account a) {
-    int i;
-    for(i=0;i<NDIRECTORY;i++) {
-        if(!strcmp(a.sharedDirectory[i], ""))
-            return FALSE;
-    }
-    return TRUE;
-}
 
 pdu addReader(char *request) {
 
@@ -117,19 +93,24 @@ account t;
     return res;
 }
 
+pdu displayDirectory(char *request) {
+    char *newRequest = malloc(sizeof(char) * (strlen(request) + 4));
+    pdu temp[NDIRECTORY];
+    pdu res;
+    int i, len = 0;
+    for(i=0;i<NDIRECTORY;i++) {
+        sprintf(newRequest, "%s %d\n", request, i);
+        temp[i] = displayRecord(newRequest);
+        if(temp[i].code == KO)
+            return temp[i];
+        len += (strlen(temp[i].request) + 1);
+    }
 
-int writeDirectory(char *filename, directory t) {
-    int i, res = 0;
-    for(i=0;i<NRECORDS;i++)
-        if((res = writeRecord(filename, t[i], i)))
-            return res;
-    return res;
-}
-
-int readDirectory(char *filename, directory t) {
-    int i, res = 0;
-    for(i=0;i<NRECORDS;i++)
-        if((res = readRecord(filename, &(t[i]), i)))
-            return res;
+    res.request = malloc(sizeof(char) * (len + 1));
+    for(i=0;i<NDIRECTORY;i++) {
+        strcat(res.request, temp[i].request);
+        strcat(res.request, "\n");
+    }
+    res.code = OK; 
     return res;
 }

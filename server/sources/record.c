@@ -108,6 +108,25 @@ pdu modifyRecord(char *request) {
     char **settings = malloc(sizeof(char*) * n);
     getR_MParameters(request, &settings, n);
     record r;
+    clearRecord(&r);
+
+    int res;
+    int len = strlen(PATH_STORAGE) + strlen(settings[0]) + 1;
+    int numRecord;
+    char *path = malloc(sizeof(char) * len);
+    memset(path, 0, len);
+    sprintf(path, "%s%s", PATH_STORAGE, settings[0]);
+
+    if((res = readRecord(path, &r, strtol(settings[1], NULL, 10)) == 1)) {
+        free(path);
+        free(settings);
+        return generateReturnedPdu(KO, "Error opening file.");
+    } else if(res == 2) {
+        free(path);
+        free(settings);
+        return generateReturnedPdu(KO, "Error reading file");
+    }
+
     char *field;
     int i = 2;
 
@@ -116,6 +135,7 @@ pdu modifyRecord(char *request) {
         if(!strcmp(field, "name")) {
             field = strtok(NULL, " ");
             if(strlen(field) > LNAME) {
+                free(path);
                 free(settings);
                 return generateReturnedPdu(KO, "Error name size too long.");
             }
@@ -123,6 +143,7 @@ pdu modifyRecord(char *request) {
         } else if(!strcmp(field, "firstName")) {
             field = strtok(NULL, " ");
             if(strlen(field) > LNAME) {
+                free(path);
                 free(settings);
                 return generateReturnedPdu(KO, "Error first name size too long.");
             }
@@ -130,6 +151,7 @@ pdu modifyRecord(char *request) {
         } else if(!strcmp(field, "phone")) {
             field = strtok(NULL, " ");
             if(!matchField(field, "^[0-9]{10}$")) {
+                free(path);
                 free(settings);
                 return generateReturnedPdu(KO, "Error phone syntax doesn't match.");
             }
@@ -137,6 +159,7 @@ pdu modifyRecord(char *request) {
         } else if(!strcmp(field, "address")) {
             field = strtok(NULL, " ");
             if(strlen(field) > LADDRESS) {
+                free(path);
                 free(settings);
                 return generateReturnedPdu(KO, "Error address size too long.");
             }
@@ -144,10 +167,12 @@ pdu modifyRecord(char *request) {
         } else if(!strcmp(field, "email")) {
             field = strtok(NULL, " ");
             if(!matchField(field, "^[-_.[:alnum:]]+@[-_[:alnum:]]+\\.[[:alnum:]]{2,4}$")) {
+                free(path);
                 free(settings);
                 return generateReturnedPdu(KO, "Error email syntax doesn't match.");
             }
             if(strlen(field) > LADDRESS) {
+                free(path);
                 free(settings);
                 return generateReturnedPdu(KO, "Error address size too long.");
             }
@@ -155,6 +180,7 @@ pdu modifyRecord(char *request) {
         } else if(!strcmp(field, "birthDate")) {
             field = strtok(NULL, " ");
             if(!matchField(field, "^[0-9]{2}/[0-9]{2}/[0-9]{4}$")) {
+                free(path);
                 free(settings);
                 return generateReturnedPdu(KO, "Error birthdate syntax doesn't match.");
             }
@@ -162,25 +188,23 @@ pdu modifyRecord(char *request) {
         } else if(!strcmp(field, "comment")) {
             field = strtok(NULL, " ");
             if(strlen(field) > LCOMMENTS) {
+                free(path);
                 free(settings);
                 return generateReturnedPdu(KO, "Error address size too long.");
             }
             strcpy(r.comments, field);
         } else {
+            free(path);
             free(settings);
             return generateReturnedPdu(KO, "Error from the request. Field not valid");
         }
     }
-    
-    int len = strlen(PATH_STORAGE) + strlen(settings[0]) + 1;
-    int numRecord;
-    char *path = malloc(sizeof(char) * len);
-    memset(path, 0, len);
-    sprintf(path, "%s%s", PATH_STORAGE, settings[0]);
     free(settings);
+    
 
     numRecord = strtol(settings[1], NULL, 10);
-    int res = writeRecord(path, r, numRecord);
+    
+    res = writeRecord(path, r, numRecord);
     free(path);
 
     if(res == 1)
@@ -261,8 +285,9 @@ pdu displayRecord(char *request) {
     free(path);
     free(data);
 
-
-    char *display = malloc(sizeof(char) * (97 + strlen(data[2]) + LNAME + LNAME + 11 + LADDRESS + LADDRESS + 11 + LCOMMENTS));
+    int len = (97 + strlen(data[2]) + LNAME + LNAME + 11 + LADDRESS + LADDRESS + 11 + LCOMMENTS);
+    char *display = malloc(sizeof(char) * len);
+    memset(display, 0, len);
 
     //Record n:||Name: ||First name: ||Email: ||Phone number: ||Address: ''||Birth date: ||Comments: ''
     sprintf(display, "Record number %ld:\n\tName: %s\n\tFirst name: %s\n\tEmail: %s\n\tPhone number :%s\n\tAddress: '%s'\n\tBirth date: %s\n\tComments: '%s'", strtol(data[2], NULL, 10), r.name, r.firstName, r.email, r.phone, r.address, r.birthDate, r.comments);

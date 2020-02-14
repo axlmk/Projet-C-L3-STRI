@@ -70,5 +70,7 @@ void clearAccount(account *t) {
     int i;
     for(i=0;i<NDIRECTORY;i++)
         memset(t->sharedDirectory[i], 0, LNAME);
+    for(i=0;i<NRECORDS;i++)
+        clearRecord(&(t->ownedDirectory[i]));
 }
 

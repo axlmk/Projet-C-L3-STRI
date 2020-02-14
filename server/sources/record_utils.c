@@ -3,7 +3,6 @@
 boolean userCanRead(account host, char *guest) {
     int i;
     for(i=0;i<NDIRECTORY;i++) {
-    fprintf(stderr, RED "salut '%s' %s %s" RESET "\n", host.sharedDirectory[i], host.username, guest);
         if(!strcmp(host.sharedDirectory[i], guest))
             return TRUE;}
     return FALSE;

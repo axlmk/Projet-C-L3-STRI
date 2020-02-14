@@ -107,7 +107,9 @@ pdu displayDirectory(char *request) {
     }
 
     res.request = malloc(sizeof(char) * (len + 1));
-    for(i=0;i<NDIRECTORY;i++) {
+    strcpy(res.request, temp[0].request);
+    strcat(res.request, "\n");
+    for(i=1;i<NDIRECTORY;i++) {
         strcat(res.request, temp[i].request);
         strcat(res.request, "\n");
     }

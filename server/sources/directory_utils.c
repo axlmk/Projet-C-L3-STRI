@@ -8,8 +8,6 @@ void getD_AParameters(char *request, char ***settings) {
 int userHasDirectory(account a, char *directoryName) {
     int i;
     for(i=0;i<NDIRECTORY;i++) {  
-            fprintf(stderr, RED "salut '%s' %s %s" RESET "\n", a.sharedDirectory[i], a.username, directoryName);
- 
         if(!strcmp(a.sharedDirectory[i], directoryName))
             return i;
     }

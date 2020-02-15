@@ -8,3 +8,4 @@
 - voir comportement du fichier account_test après suppression utilisateurs + suppression utilisateur qui existe pas
 - ajouter création dossier storage
 - ajouter champ adminstrateur ou non à un compte => peut entrainer des changements relativement importants
+- modifier un compte le supprime ( ou du moins ça en a l'air )

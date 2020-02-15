@@ -1,10 +1,5 @@
 - y a une erreur sur un malloc qui traine dans le client, faut la trouver (à confirmer)
-- quand on un supprime un account il faut que les comptes qui avaient accès au directory de cet account n'y aient plus accès
-- faire en sorte qu'on ne puisse pas supprimer l'admin
-- createAccount -> crée au premier emplacement disponible
 - corriger les : qui sont à la ligne dans dislpayRecord
  ||
   -> revient à mettre en place la vérification syntaxique des nombres côté serveur
-- voir comportement du fichier account_test après suppression utilisateurs + suppression utilisateur qui existe pas
-- ajouter création dossier storage
 - ajouter champ adminstrateur ou non à un compte => peut entrainer des changements relativement importants

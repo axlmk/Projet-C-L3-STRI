@@ -6,6 +6,8 @@
 #include "account.h"
 #include <dirent.h>
 #include <errno.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 /*
     Checks if the server was previously installed or not. Create the storage file and the admin user if it wasn't
@@ -25,5 +27,9 @@ int initiateServer(void);
         1 : The file was successfully created
 */
 int createFile(char *filename);
+
+
+int createFolder(char *filename);
+boolean folderExists(char *filename);
 
 #endif

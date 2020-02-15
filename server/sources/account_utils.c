@@ -74,3 +74,13 @@ void clearAccount(account *t) {
         clearRecord(&(t->ownedDirectory[i]));
 }
 
+void deleteSharedAccount(account *tab, int N, char *deletedUsername) {
+    int i, j;
+    for(i=0;i<N;i++) {
+        for(j=0;j<NDIRECTORY;j++) {
+            if(!strcmp(tab[i].sharedDirectory[j], deletedUsername)) {
+                memset(tab[i].sharedDirectory[j], 0, LNAME);
+            }
+        }
+    }
+}

@@ -62,6 +62,10 @@ int writeAccount(char *filename, account a, int cur);
 
 /* ------- ACCOUNT_UTILS ------- */
 
+/*
+    TO FILL
+*/
+void deleteSharedAccount(account *tab, int N, char *deletedUsername);
 
 int seekAccount(char *filename, account a);
 

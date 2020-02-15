@@ -11,14 +11,21 @@ pdu deleteAccount(char *request) {
         return res;
     }
 
+    if(!strcmp(settings[1], "admin")) {
+        res = generateReturnedPdu(KO, "You can't delete the admin user.");
+        free(settings);
+        return res;
+    }
+
     //get all accounts excepted the deleted one 
     int len = acclen(PATH_ACCOUNT_STORAGE);
     account *arr = malloc(sizeof(account) * (len) - 1);
     int i = 0, j = 0, err;
+    boolean accountExists = FALSE;
 
     for(i=0;i<len;i++) {
         if((err = readAccount(PATH_ACCOUNT_STORAGE, &arr[j], i)) == 1) {
-            res = generateReturnedPdu(KO, "Error from the server, file doesn.");
+            res = generateReturnedPdu(KO, "Error from the server, file doesn't exist.");
             free(arr);
             free(settings);
             return res;
@@ -30,7 +37,19 @@ pdu deleteAccount(char *request) {
         }
         if(strcmp(arr[j].username, settings[1]))
             j++;
+        else
+            accountExists = TRUE;
+
     }
+
+    if(!accountExists) {
+        res = generateReturnedPdu(KO, "This account doesn't exist");
+        free(settings);
+        free(arr);
+        return res;
+    }
+
+    deleteSharedAccount(arr, len, settings[1]);
     //remove and re-write the account file
 
     char *path = malloc(sizeof(char) * (strlen(PATH_STORAGE) + strlen(settings[1]) + 1));
@@ -40,8 +59,8 @@ pdu deleteAccount(char *request) {
     if (!remove(PATH_ACCOUNT_STORAGE)) {
         if(!createFile(PATH_ACCOUNT_STORAGE)) {
             res = generateReturnedPdu(KO, "Error from the server, problem creating file.");
-                free(arr);
-                return res;
+            free(arr);
+            return res;
         }
         for(i=0;i<len-1;i++) {
             if((err = writeAccount(PATH_ACCOUNT_STORAGE, arr[i], i)) == 1) {
@@ -61,6 +80,7 @@ pdu deleteAccount(char *request) {
             return res;
         }
         free(path);
+
 
     } else {
         res = generateReturnedPdu(KO, "Error from the server, file cannot be delete.");

@@ -86,7 +86,7 @@ char *Reception() {
 		perror("Reception, erreur de recv.");
 		return NULL;
 	} else if(retour == 0) {
-		fprintf(stderr, "Reception, le serveur a ferme la connexion.\n");
+		fprintf(stderr, "Le serveur a ferme la connexion.\n");
 		return NULL;
 	} else {
 		return strdup(tamponClient);
@@ -194,9 +194,14 @@ int init(char **argv){
 }
 
 int parseCommand(char *command, account *user) {
+	if(strlen(command)==1){
+		print_cmdline_help();
+		return 1;
+	}
 	char extract[500];
 	strncpy(extract,command,500*sizeof(char));
 	char *code=strtok(extract," \n");
+
 
 	if(strcmp(code,"login")==0){
         printf("[" GREEN "*" RESET "] Logging\n");
@@ -270,7 +275,7 @@ boolean isSyntaxCorrect(char *command, pdu_code co) {
     char *temp_str = malloc(sizeof(char) * (strlen(command) + 1));
     strcpy(temp_str, command);
     token = strtok(temp_str, delim);
-  
+
     int i = 0;
     while(token) {
         i++;
@@ -338,15 +343,15 @@ char *showSyntax(pdu_code co) {
         case A_C:
             return "createAccount <username> <pass>";
         case A_M:
-            return "modifyAccount <field> <new_value>";   
+            return "modifyAccount <field> <new_value>";
         case A_D:
-            return "deleteAccount <username>";   
+            return "deleteAccount <username>";
         case AUTH:
-            return "login <username> <pass>";   
+            return "login <username> <pass>";
         case R_C:
-            return "createRecord <record_number> name:<name> firstName:<fisrtName> email:<email> [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]";   
+            return "createRecord <record_number> name:<name> firstName:<fisrtName> email:<email> [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]";
         case R_M:
-            return "modifyRecord <record_number> [name:<name>] [firstName:<fisrtName>] [email:<email>] [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]";   
+            return "modifyRecord <record_number> [name:<name>] [firstName:<fisrtName>] [email:<email>] [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]";
         case R_D:
             return "deleteRecord <record_number>";
         case D_A:
@@ -395,6 +400,9 @@ int executeCommand(char *command, pdu_code co, account *user){
 
     Emission(message);
     retour = Reception();
+		if(!retour){
+			exit(1);
+		}
 
     messageToPDU(&t, retour);
     if(t.code == OK) {
@@ -413,5 +421,5 @@ int executeCommand(char *command, pdu_code co, account *user){
         printf("[" RED "!" RESET "] : " RED "%s" RESET "\n", t.request);
     free(retour);
     free(t.request);
-    return 0; 
+    return 0;
 }

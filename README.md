@@ -17,3 +17,6 @@ cd serveur/sources && make && ./main
 #Launch the client
 cd client/sources && make && ./main <ip>:<port>
 ```
+### Infos
+
+There is a default admin account. To connect to it the login/password is : admin/admin

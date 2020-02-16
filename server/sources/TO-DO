@@ -1,5 +1,2 @@
 - y a une erreur sur un malloc qui traine dans le client, faut la trouver (à confirmer)
-- corriger les : qui sont à la ligne dans dislpayRecord
- ||
-  -> revient à mettre en place la vérification syntaxique des nombres côté serveur
 - ajouter champ adminstrateur ou non à un compte => peut entrainer des changements relativement importants

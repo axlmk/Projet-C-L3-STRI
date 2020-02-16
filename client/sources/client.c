@@ -205,50 +205,39 @@ int parseCommand(char *command, account *user) {
 
 	if(strcmp(code,"login")==0){
         printf("[" GREEN "*" RESET "] Logging\n");
-		//printf("%d\n", executeCommand(command, AUTH, user));
         executeCommand(command, AUTH, user);
 	} else if(strcmp(code,"createAccount")==0){
 		printf("[" GREEN "*" RESET "] Creating an account\n");
-		//printf("%d\n", executeCommand(command, A_C, user));
         executeCommand(command, A_C, user);
 	} else if(strcmp(code,"modifyAccount")==0){
 		printf("[" GREEN "*" RESET "] Modifying an account\n");
-		//printf("%d\n", executeCommand(command, A_M, user));
         executeCommand(command, A_M, user);
 	} else if(strcmp(code,"deleteAccount")==0){
 		printf("[" GREEN "*" RESET "] Deleting an account\n");
-		//printf("%d\n", executeCommand(command, A_D, user));
         executeCommand(command, A_D, user);
 	} else if(strcmp(code,"displayDirectory")==0){
 		printf("[" GREEN "*" RESET "] Displaying a directory\n");
-		//printf("%d\n", executeCommand(command, D_D, user));
         executeCommand(command, D_P, user);
     } else if(strcmp(code,"displayRecord")==0){
 		printf("[" GREEN "*" RESET "] Displaying a directory\n");
-		//printf("%d\n", executeCommand(command, D_D, user));
         executeCommand(command, R_P, user);
 	} else if(strcmp(code,"createRecord")==0){
 		printf("[" GREEN "*" RESET "] Creating a record\n");
-		//printf("%d\n", executeCommand(command, R_C, user));
         executeCommand(command, R_C, user);
     } else if(strcmp(code,"modifyRecord")==0){
 		printf("[" GREEN "*" RESET "] Modifying an account\n");
-		//printf("%d\n", executeCommand(command, R_M, user));
         executeCommand(command, R_M, user);
 	} else if(strcmp(code,"deleteRecord")==0){
 		printf("[" GREEN "*" RESET "] Deleting an account\n");
-		//printf("%d\n", executeCommand(command, R_D, user));
         executeCommand(command, R_D, user);
 	} else if(strcmp(code,"addReader")==0){
 		printf("[" GREEN "*" RESET "] Adding an account\n");
-		//printf("%d\n", executeCommand(command, R_D, user));
         executeCommand(command, D_A, user);
 	} else if(strcmp(code,"rmReader")==0){
 		printf("[" GREEN "*" RESET "] Removing an account\n");
-		//printf("%d\n", executeCommand(command, R_D, user));
         executeCommand(command, D_R, user);
 	} else {
-		printf("[" RED "!" RESET "] Bad commslkjand\n");
+		printf("[" RED "!" RESET "] Bad command\n");
 		print_cmdline_help();
 	}
 	return 0;
@@ -271,15 +260,33 @@ void print_cmdline_help(void){
 
 boolean isSyntaxCorrect(char *command, pdu_code co) {
     char *token = NULL;
-    char delim[2] = " ";
+    char delim[3] = " \n";
     char *temp_str = malloc(sizeof(char) * (strlen(command) + 1));
     strcpy(temp_str, command);
     token = strtok(temp_str, delim);
 
     int i = 0;
     while(token) {
-        i++;
+        switch (co) {
+            case R_C:
+                if(i == 1)
+                    if(!matchField(token, "^[0-9]{1,2}$"))
+                        return FALSE;
+                break;
+            case R_M:
+                if(i == 1)
+                    if(!matchField(token, "^[0-9]{1,2}$"))
+                        return FALSE;
+                break;
+            case R_P:
+                if(i == 2)
+                    if(!matchField(token, "^[0-9]{1,2}$"))
+                        return FALSE;
+            default:
+                break;
+        }
         token = strtok(NULL, delim);
+        i++;
     }
     switch (co) {
         case AUTH:

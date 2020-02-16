@@ -5,7 +5,7 @@
 #include "utils.h"
 #include "pdu.h"
 #include "account.h"
-#include <regex.h>
+#include "tools.h"
 
 /* ------- RECORDIO ------- */
 
@@ -94,11 +94,6 @@ void clearRecord(record *r);
     TO FILL
 */
 boolean userCanRead(account host, char *guest);
-
-/*
-    TO FILL
-*/
-boolean matchField(char *field, char *str_regex);
 
 /* ------- RECORD ------- */
 

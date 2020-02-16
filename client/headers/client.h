@@ -4,6 +4,7 @@
 #include "../../server/headers/utils.h"
 #include "../../server/headers/pdu.h"
 #include "../../server/headers/data_structures.h"
+#include "../../server/headers/record.h"
 
 /* Initialisation.
  * Connexion au serveur sur la machine donnee.

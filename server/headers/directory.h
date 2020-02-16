@@ -39,12 +39,30 @@ int userHasDirectory(account a, char *directoryName);
 boolean isFull(account a);
 
 /*
-    TO FILL
+    Stores a directory to a binary file.
+    Input:
+        filename : char * : The name of the file that will be written
+        t : directory : the directory to write
+    Return:
+        Exit code:
+            0 : OK 
+            1 : File could not be opened
+            2 : File could not be written
+
 */
 int writeDirectory(char *filename, directory t);
 
 /*
-    TO FILL
+    Read a directory from a binary file.
+    Input:
+        filename : char * : The name of the file that will be read
+        t : directory : the directory to read
+    Return:
+        Exit code:
+            0 : OK 
+            1 : File could not be opened
+            2 : File could not be read
+
 */
 int readDirectory(char *filename, directory t);
 
@@ -69,7 +87,11 @@ pdu addReader(char *request);
 pdu rmReader(char *request);
 
 /*
-    TO FILL
+    Display a requested directory to the client
+    Input:
+        request : char * : The request sent by the client
+    Return:
+        The formatted pdu to send
 */
 pdu displayDirectory(char *request);
 

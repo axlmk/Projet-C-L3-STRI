@@ -28,7 +28,6 @@ int PDUToMessage(pdu p, char **m);
 */
 int messageToPDU(pdu *p, char *m);
 
-
 /*
     Generates the PDU that will be send back to the client according to the calling function
     Input:

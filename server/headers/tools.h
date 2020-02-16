@@ -6,7 +6,12 @@
 #include <regex.h>
 
 /*
-    TO FILL
+    Checks if a string correspond to a regular expression
+    Input:
+        field : char * : The string to compare
+        str_regex : char * : The regex to match
+    Return:
+        TRUE or FALSE
 */
 boolean matchField(char *field, char *str_regex);
 

@@ -49,24 +49,27 @@ be 3. The cursor value start at 0.
 */
 int writeAccount(char *filename, account a, int cur);
 
+/* ------- ACCOUNT_UTILS ------- */
+
+/*
+    Removes the deleted reader into all the others accounts
+    Input:
+        tab : account * : The array of all accounts
+        N : int : The number of accounts present in the array
+        deletedUsername : char * : The username of the deleted user 
+*/
+void deleteSharedAccount(account *tab, int N, char *deletedUsername);
+
 /*
     Seeks for an account inside the storage file.
-    Input :
+    Input:
         filename : char * : The name of the storage file
         a : account : The account we are looking for
-    Return :
+    Return:
         -2 : The file doesn't exist
         -1 : The account has not been found
         [0, infinite] : The index of the found account
 */
-
-/* ------- ACCOUNT_UTILS ------- */
-
-/*
-    TO FILL
-*/
-void deleteSharedAccount(account *tab, int N, char *deletedUsername);
-
 int seekAccount(char *filename, account a);
 
 /*
@@ -80,7 +83,7 @@ int seekAccount(char *filename, account a);
 boolean areLoginsEquals(account a, account b);
 
 /*
-    Parses the request string into the settings array according to the AUTH rules
+    Parses the request string into the settings array according to the A_D rules
     Input:
         request : char * : The request to parse
     Output:
@@ -89,14 +92,13 @@ boolean areLoginsEquals(account a, account b);
 void getA_DParameters(char *request, char ***settings);
 
 /* 
-    Checks if the user requesting the account deletion is the admin
+    Checks if the user requesting the account deletion is an admin user
     Input:
         login : char * : The user's login
     Return
         TRUE or FALSE
 */
 boolean A_DAuthorization(char *login);
-
 
 /*
     Counts the number of accounts presents in the storage account file
@@ -145,12 +147,20 @@ void getA_MParameters(char *request, char ***data);
 pdu deleteAccount(char *request);
 
 /*
-    TO FILL
+    Creates an account into the system
+    Input:
+        request : char * : The request sent by the client
+    Return:
+        The formatted pdu to send
 */
 pdu createAccount(char *request);
 
 /*
-    TO FILL
+    Modifies an account of the system
+    Input:
+        request : char * : The request sent by the client
+    Return:
+        The formatted pdu to send
 */
 pdu modifyAccount(char  *requete);
 

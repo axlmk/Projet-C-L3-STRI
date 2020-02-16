@@ -27,6 +27,13 @@ pdu connectionAuthorized(char *request);
 */
 boolean areCredentialsEquals(account a, account b);
 
+/*
+    Parses the request string into the settings array according to the AUTH rules
+    Input:
+        request : char * : The request to parse
+    Output:
+        settints : char *** : The array containing the parsed elements
+*/
 void getAuthParameters(char *request, char ***settings);
 
 #endif

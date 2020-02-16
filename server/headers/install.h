@@ -28,8 +28,23 @@ int initiateServer(void);
 */
 int createFile(char *filename);
 
-
+/*
+    Creates a folder
+    Input:
+        filename : char * : The name of the folder
+    Return:
+        0 : An error occured while creating the folder
+        1 : The folder was successfully created
+*/
 int createFolder(char *filename);
+
+/*
+    Checks if a folder exists
+    Input:
+        filename : char * : The name of the folder
+    Return
+        TRUE or FALSE
+*/
 boolean folderExists(char *filename);
 
 #endif

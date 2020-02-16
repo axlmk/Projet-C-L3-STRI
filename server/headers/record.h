@@ -9,7 +9,6 @@
 
 /* ------- RECORDIO ------- */
 
-
 /*
     Stores a record to a binary file.
     Input:
@@ -86,34 +85,55 @@ void getR_MParameters(char *request, char ***settings, int N);
 int getSettingsNumber(char *request);
 
 /*
-    TO FILL
+    Clear all the strings composing the structure
+    Ouput:
+        r : record * : The record to clear
 */
 void clearRecord(record *r);
 
 /*
-    TO FILL
+    Checks if a host user is authorized to read the directory from a specified guest
+    Input:
+        host : account : The host having a read access to the guest directory
+        guest : char * : The username giving the access
 */
 boolean userCanRead(account host, char *guest);
 
 /* ------- RECORD ------- */
 
 /*
-    TO FILL
+    Creates a record for specific user
+    Input:
+        request : char * : The request sent by the client
+    Return:
+        The formatted pdu to send
 */
 pdu createRecord(char *request);
 
 /*
-    TO FILL
+    Modifies a record for a specific user
+    Input:
+        request : char * : The request sent by the client
+    Return:
+        The formatted pdu to send
 */
 pdu modifyRecord(char *request);
 
 /*
-    TO FILL
+    Deletes a record for from specific user
+    Input:
+        request : char * : The request sent by the client
+    Return:
+        The formatted pdu to send
 */
 pdu deleteRecord(char *request);
 
 /*
-    TO FILL
+    Display a requested record to the client
+    Input:
+        request : char * : The request sent by the client
+    Return:
+        The formatted pdu to send
 */
 pdu displayRecord(char *request);
 

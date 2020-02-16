@@ -8,12 +8,12 @@ git clone https://github.com/axlmk/Projet-C-L3-STRI
 
 ### Usage
 * **Serveur :**
-'''bash
+```bash
 #Launch the server (port 13214 on all interfaces)
 cd serveur/sources && make && ./main
-'''
+```
 * **Client :**
-'''bash
+```bash
 #Launch the client
 cd client/sources && make && ./main <ip>:<port>
-'''
+```

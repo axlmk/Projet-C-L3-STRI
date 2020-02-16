@@ -7,7 +7,7 @@
 int main(int argc,char **argv) {
     char *current=malloc(500*sizeof(char));
     memset(current,0,500*sizeof(char));
-    
+
     if(argc<2){
         print_usage(argv[0]);
         return 2;
@@ -22,7 +22,7 @@ int main(int argc,char **argv) {
     memset(cur.username, 0, LNAME);
 
     while(1){
-        printf(CYAN "%s" RESET "#: ", cur.username);
+        printf(CYAN "%s" RESET " # : ", cur.username);
         fgets(current,sizeof(char)*500,stdin);
         fflush(stdin);
         if(strcmp(current,"quit\n")==0) {

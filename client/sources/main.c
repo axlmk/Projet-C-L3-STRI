@@ -7,7 +7,7 @@
 int main(int argc,char **argv) {
     char *current=malloc(500*sizeof(char));
     memset(current,0,500*sizeof(char));
-    
+
     if(argc<2){
         print_usage(argv[0]);
         return 2;

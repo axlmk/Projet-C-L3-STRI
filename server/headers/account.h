@@ -1,8 +1,8 @@
 #ifndef __ACCOUNTIO__
 #define __ACCOUNTIO__
 
-#define PATH_ACCOUNT_STORAGE "../storage/account_test"
-#define PATH_STORAGE "../storage/"
+#define PATH_ACCOUNT_STORAGE "../../server/storage/account_test"
+#define PATH_STORAGE "../../server/storage/"
 
 #include "data_structures.h"
 #include "authentication.h"

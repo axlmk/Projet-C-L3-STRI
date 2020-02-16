@@ -22,7 +22,10 @@ int main(int argc,char **argv) {
     memset(cur.username, 0, LNAME);
 
     while(1){
-        printf(CYAN "%s" RESET "#: ", cur.username);
+        if(cur.userT == USER)
+            printf(CYAN "%s" RESET "#: ", cur.username);
+        else
+            printf(YELLOW "%s" RESET "#: ", cur.username);
         fgets(current,sizeof(char)*500,stdin);
         fflush(stdin);
         if(strcmp(current,"quit\n")==0) {

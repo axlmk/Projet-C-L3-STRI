@@ -6,7 +6,7 @@ int readAccount(char *filename, account *a, int cur) {
     if(!f)
         return 1;
 
-    int size = (sizeof(char) * LNAME) + (sizeof(char) * NDIRECTORY * LNAME) + (sizeof(char) * LPASS);
+    int size = (sizeof(char) * LNAME) + (sizeof(char) * NDIRECTORY * LNAME) + (sizeof(char) * LPASS) + sizeof(user_type);
     cur *= size;
     fseek(f, cur, SEEK_SET);
     if(!fread(a, size, 1, f)) {
@@ -28,7 +28,7 @@ int writeAccount(char *filename, account a, int cur) {
     if(!f)
         return 1;
 
-    int size = (sizeof(char) * LNAME) + (sizeof(char) * NDIRECTORY * LNAME) + (sizeof(char) * LPASS);
+    int size = (sizeof(char) * LNAME) + (sizeof(char) * NDIRECTORY * LNAME) + (sizeof(char) * LPASS) + sizeof(user_type);
     cur *= size;
     fseek(f, cur, SEEK_SET);
     if(!fwrite(&a, size, 1, f)) {

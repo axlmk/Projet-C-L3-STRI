@@ -421,6 +421,7 @@ int executeCommand(char *command, pdu_code co, account *user){
                 user->username[u] = name[u];
                 u++;
             }
+            readAccount(PATH_ACCOUNT_STORAGE, user, seekAccount(PATH_ACCOUNT_STORAGE, *user));
         }
         printf("[" GREEN "*" RESET "] : " GREEN "%s" RESET "\n", t.request);
     }

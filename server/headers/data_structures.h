@@ -30,8 +30,13 @@ typedef enum pdu_code {
     R_D = 11,
     R_P = 12,
     OK = 13,
-    KO = 14,
+    KO = 14
 } pdu_code;
+
+typedef enum user_type {
+    USER = 0,
+    ADMIN = 1
+} user_type;
 
 typedef struct record {
     char name[LNAME];
@@ -46,6 +51,7 @@ typedef struct record {
 typedef record directory[NRECORDS];
 
 typedef struct account {
+    user_type userT;
     char username[LNAME];
     char password[LPASS];
     char sharedDirectory[NDIRECTORY][LNAME];

@@ -8,6 +8,7 @@ int initiateServer(void) {
     
     account t;
     strcpy(t.username, "admin");
+    t.userT = ADMIN;
     int res = seekAccount(PATH_ACCOUNT_STORAGE, t);
 
     if(res == -2) {

@@ -94,7 +94,7 @@ pdu deleteAccount(char *request) {
 }
 
 pdu createAccount(char *request){
-    char **data = malloc(sizeof(char *) * 3);
+    char **data = malloc(sizeof(char *) * 4);
     pdu res;
     getA_CParameters(request, &data);
 

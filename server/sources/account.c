@@ -110,6 +110,16 @@ pdu createAccount(char *request){
     /*Ajout des information de l'utilisateur*/
     strcpy(temp.username, data[1]);
     strcpy(temp.password, data[2]);
+    if(!strcmp(data[3], "admin"))
+        temp.userT = ADMIN;
+    else if(!strcmp(data[3], "user"))
+        temp.userT = USER;
+    else {
+        res = generateReturnedPdu(KO, "The mode isn't valid");
+        free(data);
+        return res;
+    }
+
     if(seekAccount(PATH_ACCOUNT_STORAGE, temp) >= 0) {
         res = generateReturnedPdu(KO, "Error, account already exists.");
         free(data);
@@ -199,8 +209,31 @@ pdu modifyAccount(char  *requete){
                     return generateReturnedPdu(OK, "Success");
                 }
             }
-        }
-        else{
+        } else if(!strcmp(tokens[2], "mode")) {
+            err = readAccount(PATH_ACCOUNT_STORAGE, &temp, seekAccount(PATH_ACCOUNT_STORAGE,temp));
+            if(err == 1) {
+                return generateReturnedPdu(KO, "An error occured, The file couldn't be opened");
+            } else if (err==2) {
+                return generateReturnedPdu(KO, "An error occured, the file couldn't be written");
+            } else {
+                if(!strcmp(tokens[3], "admin"))
+                    temp.userT = ADMIN;
+                else if(!strcmp(tokens[3], "user"))
+                    temp.userT = USER;
+                else
+                    return generateReturnedPdu(KO, "The mode isn't valid");
+                err = writeAccount(PATH_ACCOUNT_STORAGE, temp, seekAccount(PATH_ACCOUNT_STORAGE,temp));
+                if(err == -2){
+                    return generateReturnedPdu(KO, "An error occured, the file doesn't exist");
+                }
+                else if(err == -1) {
+                    return generateReturnedPdu(KO, "An error occured, the account cannot be found");
+                }
+                else {
+                    return generateReturnedPdu(OK, "Success");
+                }
+            }
+        } else if(!strcmp(tokens[2], "username")) {
             pos = seekAccount(PATH_ACCOUNT_STORAGE,temp);
             err = readAccount(PATH_ACCOUNT_STORAGE,&temp,pos);
             if (err==1){
@@ -247,6 +280,8 @@ pdu modifyAccount(char  *requete){
                     return generateReturnedPdu(OK, "Success");
                 }
             }
+        } else {
+            return generateReturnedPdu(KO, "The field isn't valid");
         }
     }
 }

@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-W -Wall -pedantic -ln
+CFLAGS=-W -Wall -pedantic -ln -g
 LDFLAGS=
 EXEC=main
 

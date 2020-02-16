@@ -246,8 +246,8 @@ int parseCommand(char *command, account *user) {
 void print_cmdline_help(void){
 	printf("Syntax: \n");
     printf("\t- " MAGENTA "login" RESET " <id> <pass>\n");
-    printf("\t- " MAGENTA "createAccount" RESET " <username> <pass>\n");
-    printf("\t- " MAGENTA "modifyAccount" RESET " <username> <fieldName> <fieldValue>\n");
+    printf("\t- " MAGENTA "createAccount" RESET " <username> <pass> <mode>\n");
+    printf("\t- " MAGENTA "modifyAccount" RESET " <username> mdp|username|mode <fieldValue>\n");
     printf("\t- " MAGENTA "deleteAccount" RESET " <username>\n");
     printf("\t- " MAGENTA "createRecord" RESET " <record_number> name:<name> firstName:<fisrtName> email:<email> [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]\n");
     printf("\t- " MAGENTA "modifyRecord" RESET " <record_number> [name:<name>] [firstName:<fisrtName>] [email:<email>] [comments:<comments>] [birthDate:<birthDate] [phone:<phone>]\n");
@@ -294,7 +294,7 @@ boolean isSyntaxCorrect(char *command, pdu_code co) {
                 return FALSE;
         break;
         case A_C:
-            if(i!=3)
+            if(i!=4)
                 return FALSE;
         break;
         case A_M:
@@ -348,7 +348,7 @@ boolean isLogged(account a) {
 char *showSyntax(pdu_code co) {
     switch (co) {
         case A_C:
-            return "createAccount <username> <pass>";
+            return "createAccount <username> <pass> <mode>";
         case A_M:
             return "modifyAccount <field> <new_value>";
         case A_D:

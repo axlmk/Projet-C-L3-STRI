@@ -1,4 +1,4 @@
-CFLAGS= -W -Wall -pedantic -Wno-unused-value -Wno-sign-compare -Wno-unused-variable -Wno-unused-parameter -Wno-unused-but-set-variable
+CFLAGS= -W -Wall -pedantic -Wno-unused-value -Wno-sign-compare -Wno-unused-variable -Wno-unused-parameter -Wno-unused-but-set-variable -g
 CC=gcc
 
 main: main.o client.o pdu.o tools.o accountio.o account_utils.o directory.o directory_utils.o record_utils.o record.o recordio.o

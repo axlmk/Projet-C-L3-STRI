@@ -33,11 +33,14 @@ void getA_DParameters(char *request, char ***settings) {
 }
 
 boolean A_DAuthorization(char *login) {
-    account a, b;
+    account a;
     strcpy(a.username, login);
-    if(readAccount(PATH_ACCOUNT_STORAGE, &b, 0))
-            return FALSE;
-    return areLoginsEquals(a, b);
+    int res;
+    if((res = seekAccount(PATH_ACCOUNT_STORAGE, a)) >= 0)
+        if(!readAccount(PATH_ACCOUNT_STORAGE, &a, res))
+            if(a.userT == ADMIN)
+                return TRUE;
+    return FALSE;
 }
 
 
@@ -47,8 +50,8 @@ void getA_CParameters(char *request, char ***data) {
     /*Parsage de la requète contenue dans la PDU en entrée*/
     (*data)[i] = strtok(request, " ");
     i++;
-    while(i<3){
-        (*data)[i] = strtok(NULL, " ");
+    while(i<4){
+        (*data)[i] = strtok(NULL, " \n");
         i++;
     }
 }
